@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <link href="node_modules/bootstrap/dist/css/bootstrap.css" rel="stylesheet">
+    <link href="public.css" rel="stylesheet">
+    <link rel="stylesheet" href="node_modules/font-awesome/css/font-awesome.css">
+    <script src="node_modules/bootstrap/dist/js/bootstrap.bundle.js"></script>
+    <script src="node_modules/jquery/dist/jquery.js"></script>
+    <script src="node_modules/exif-js/exif.js"></script>
+    <script src="node_modules/jquery-contextmenu/dist/jquery.contextMenu.js"></script>
+    <link href="node_modules/jquery-contextmenu/dist/jquery.contextMenu.css" type="text/css" rel="stylesheet">
+
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-md navbar-dark bg-dark navbartop" aria-label="Fourth navbar example">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">Media Explorer</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarsExample04"
+                aria-controls="navbarsExample04" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarsExample04">
+                <ul class="navbar-nav me-auto mb-2 mb-md-0">
+                    <!--
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="#">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Link</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link disabled">Disabled</a>
+                    </li>
+                    -->
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown"
+                            aria-expanded="false">Music queue</a>
+                        <ul class="dropdown-menu music">
+                            <li><a class="dropdown-item" href="#">Action</a></li>
+                            <li><a class="dropdown-item" href="#">Another action</a></li>
+                            <li><a class="dropdown-item" href="#">Something else here</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown"
+                            aria-expanded="false">View</a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item pictures" href="#">Pictures</a></li>
+                            <li><a class="dropdown-item music" href="#">Music</a></li>
+                        </ul>
+                    </li>
+                </ul>
+                <!--
+                <form role="search">
+                    <input class="form-control" type="search" placeholder="Search" aria-label="Search">
+                </form>
+                -->
+            </div>
+        </div>
+    </nav>
+    <nav class="navbar fixed-bottom navbar-expand-sm navbar-dark bg-dark navbarbottom">
+        <div class="container-fluid">
+            <!-- <a class="navbar-brand" href="#">Bottom navbar</a> -->
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse"
+                aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarCollapse">
+                    <li class="nav-item">
+                        <div class="audio" style="border:solid yellow 2px;padding : 5px;">
+                        </div>
+                    </li>
+                    <li class="nav-item" style="display:none">
+                        <a class="nav-link active" aria-current="page" href="#">Home</a>
+                    </li>
+                    <li class="nav-item" style="display:none">
+                        <a class="nav-link" href="#">Link</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link disabled" style="display:none">Disabled</a>
+                    </li>
+                    <li class="nav-item dropup" style="display:none">
+                        <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown"
+                            aria-expanded="false">Dropup</a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="#">Action</a></li>
+                            <li><a class="dropdown-item" href="#">Another action</a></li>
+                            <li><a class="dropdown-item" href="#">Something else here</a></li>
+                        </ul>
+                    </li>
+                    <li>
+                        <div id="status">ABCD</div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <div>
+        <div style="display:none;"> <a href="Music">Music</a>
+            <button type="button" class="btn btn-primary music" data-toggle="collpase">Music</button>
+            <a href="Pictures">Pictures</a>
+            <button type="button" class="btn btn-primary pictures">Pictures</button>
+        </div>
+        <!-- Button HTML (to Trigger Modal) -->
+        <!-- <a href="#myModal" role="button" class="btn btn-lg btn-primary" data-bs-toggle="modal">Launch Demo Modal</a> -->
+
+        <!-- Modal HTML -->
+        <div id="myModal" class="modal fade" tabindex="-1">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Confirmation</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <p>Do you want to save changes to this document before closing?</p>
+                        <p class="text-secondary"><small>If you don't save, your changes will be lost.</small></p>
+                    </div>
+                    <!-- <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="button" class="btn btn-primary">Save changes</button>
+                    </div> -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div style="position:relative; top:300px; display:none;">
+        <i class="fa fa-arrow-up" aria-hidden="true"></i>
+        <i class="fa fa-arrow-down" aria-hidden="true"></i>
+    </div>
+    <!-- <div class="audio"></div> -->
+    <div class="container-main"
+        style="border:solid red 5px; max-height: 500px; display:flex; flex-direction: column; margin-bottom: 50px;">
+        <div class="container-fluid music" style="overflow:scroll;  min-height: 200px; margin-left: 20px;"></div>
+        <div class="container-fluid pictures" style="overflow:scroll;  margin-left: 20px;display:none;">
+        </div>
+    </div>
+    <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <H1>Got here</H1>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary">Save changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+<script src="index.js"></script>
+
+</html>

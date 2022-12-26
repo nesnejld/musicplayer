@@ -1,0 +1,74 @@
+.thumbnail {
+    width: 200px;
+}
+
+td.music {
+    color: red;
+}
+
+td.music:hover {
+    color: blue;
+}
+
+ol.hide,
+ul.hide {
+    display: none;
+}
+
+div.music li {
+    color: blue;
+}
+
+div.music li:hover {
+    color: black;
+}
+
+#status {
+    color: white;
+    margin-left: 100px;
+    vertical-align: middle;
+}
+
+div.music ul {
+    list-style-type: none;
+}
+
+li.dropdown-item.music span.fa:hover {
+    color: black;
+}
+
+li.dropdown-item.music:hover {
+    color: blue
+}
+
+P li.dropdown-item.music span.fa {
+    color: blue;
+}
+
+ul.dropdown-menu.music {
+    max-height: 500px;
+    overflow-y: auto;
+}
+
+a.btn.btn-sm.btn-default:hover {
+    color: yellow;
+    background: gray;
+}
+
+html,
+body {
+    height: 100%;
+}
+
+div.audio {
+    display: table;
+}
+
+div.audio span {
+    color: white;
+    display: table-cell;
+    vertical-align: middle;
+}
+.singleplay {
+    margin-right: 20px;
+}
