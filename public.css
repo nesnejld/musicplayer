@@ -69,6 +69,41 @@ div.audio span {
     display: table-cell;
     vertical-align: middle;
 }
+
 .singleplay {
     margin-right: 20px;
 }
+
+div.musicqueue {
+    /* background: red; */
+    overflow: scroll;
+    min-height: 200px;
+    margin-left: 20px;
+    /* border: solid blue 5px; */
+    margin: 20px 20px 50px 20px;
+    box-shadow: 0 3px 10px rgb(0 0 0 / 0.2);
+}
+
+div.music {
+    overflow: scroll;
+    min-height: 200px;
+    margin: 20px 20px 50px 20px;
+    /* background: antiquewhite; */
+    box-shadow: 0 3px 10px rgb(0 0 0 / 0.2);
+}
+
+div.musiccontainer {
+    display: flex;
+    flex-direction: row;
+    max-height: 600px;
+    /* border: solid green 2px; */
+}
+
+div.container-main {
+    /* border: solid red 5px; */
+    max-height: 500px;
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 50px;
+}
+

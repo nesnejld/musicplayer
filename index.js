@@ -1,4 +1,6 @@
 $(function () {
+    let folderopen = 'fa fa-folder-open'
+    let folderclosed = 'fa fa-folder'
     let gettree = async function (hrefparent, depth) {
         // console.log(hrefparent)
         // console.log(depth)
@@ -150,6 +152,42 @@ $(function () {
             li.append($("<span>").text(decodeURIComponent(q).replace(/\/$/, '')))
             $("ul.dropdown-menu.music").append(li)
         });
+        $("div.musicqueue").empty();
+        let table = $("<table>").addClass("musicqueue table table-striped text-nowrap table-primary")
+        $("div.musicqueue").append(table)
+        let thead = $("<thead>")
+        table.append(thead)
+        let tbody = $("<tbody>")
+        table.append(tbody)
+        queue.forEach(q => {
+            let tr = $("<tr>")
+            tbody.append(tr)
+            let td = $("<td>").attr("data-uri", q)// .text(decodeURIComponent(q))
+            ///
+            button = $("<a>").addClass("btn btn-sm btn-default")
+            button.on("click", movetotop)
+            span = $("<span>").addClass("fa fa-play")
+            td.append(button.append(span))
+            ///
+            button = $("<a>").addClass("btn btn-sm btn-default")
+            button.on("click", moveup)
+            span = $("<span>").addClass("fa fa-long-arrow-up")
+            td.append(button.append(span))
+            //
+            button = $("<a>").addClass("btn btn-sm btn-default")
+            button.on("click", movedown)
+            span = $("<span>").addClass("fa fa-long-arrow-down")
+            td.append(button.append(span))
+            //
+            button = $("<a>").addClass("btn btn-sm btn-default")
+            button.on("click", remove)
+            span = $("<span>").addClass("fa fa-remove")
+            td.append(button.append(span))
+            tr.append(td)
+            td = $("<td>")
+            td.append($("<span>").text(decodeURIComponent(q).replace(/\/$/, '')))
+            tr.append(td)
+        });
     }
     async function playall() {
         playing = true
@@ -175,6 +213,18 @@ $(function () {
     function renderJSON(json) {
         let list = $(`<${listtype}>`)
         list.addClass("json hide")
+        function playallchildren(event) {
+            let el = $(event.target).parent()
+            $("li[data-leaf='true']", el).each((i, e) => {
+                queue.push($(e).attr('data-uri'))
+            }
+            )
+            updateq()
+            if (!playing) {
+                playall()
+            }
+            event.stopPropagation()
+        }
         for (let j of json) {
             let li = $("<li>")
             if (j.children || j.self.toUpperCase().match('\.MP3$') || j.self.toUpperCase().match('\.M4A$') || j.self.toUpperCase().match('\.OGG$')) {
@@ -187,9 +237,12 @@ $(function () {
                 if (j.children) {
                     // li=$("<li>")
                     // list.append(li)
-                    li.prepend($("<i>").addClass("fa fa-folder-o").attr("href", '#').css("margin-right", "20px"))
+                    li.prepend($("<i>").addClass(folderclosed).attr("href", '#').css("margin-right", "20px"))
+                    let a = $('<a href="#" class="fa fa-play-circle-o singleplay" style="text-decoration:none;color:blue;"></a>')
+                    li.prepend(a)
                     li.
                         append(renderJSON(j.children))
+                    a.on("click", playallchildren)
                 }
                 else {
                     let a = $('<a href="#" class="fa fa-play-circle-o singleplay" style="text-decoration:none;color:blue;"></a>')
@@ -221,6 +274,7 @@ $(function () {
         ol.removeClass("hide")
         let selector = "div.music"
         $(selector).empty().append(ol)
+        /*
         $.contextMenu({
             // define which elements trigger this menu
             selector: "div.music li[data-leaf='false']",
@@ -242,6 +296,7 @@ $(function () {
                 },
             }
         });
+        */
         /*
         $.contextMenu({
             // define which elements trigger this menu
@@ -262,33 +317,35 @@ $(function () {
             }
         });
         */
-        $.contextMenu({
-            // define which elements trigger this menu
-            selector: "ul.dropdown-menu.music li",
-            // define the elements of the menu
-            items: {
-                remove: {
-                    name: "Remove from queue", callback: function (key, opt) {
-                        remove({ target: this })
-                        return;
-                    }
-                },
-                up: {
-                    name: "Move up", callback: function (key, opt) {
-                        moveup({ target: this })
-                        return;
-                    }
-                },
-                down: {
-                    name: "Move down", callback: function (key, opt) {
-                        movedown({ target: this })
-                        return;
-                    }
-                },
-
-            }
-            // there's more, have a look at the demos and docs...
-        });
+        /*
+         $.contextMenu({
+             // define which elements trigger this menu
+             selector: "ul.dropdown-menu.music li",
+             // define the elements of the menu
+             items: {
+                 remove: {
+                     name: "Remove from queue", callback: function (key, opt) {
+                         remove({ target: this })
+                         return;
+                     }
+                 },
+                 up: {
+                     name: "Move up", callback: function (key, opt) {
+                         moveup({ target: this })
+                         return;
+                     }
+                 },
+                 down: {
+                     name: "Move down", callback: function (key, opt) {
+                         movedown({ target: this })
+                         return;
+                     }
+                 },
+ 
+             }
+             // there's more, have a look at the demos and docs...
+         });
+         */
         $('li', $(selector)).on("click", function (event) {
             event.stopPropagation()
             let eparent = $(event.target).parent()
@@ -296,10 +353,10 @@ $(function () {
                 $(">" + listtype, eparent).each((i, e) => {
                     if ($(e).hasClass('hide')) {
                         $(e).removeClass('hide').addClass('show')
-                        $(">i", eparent).removeClass('fa-folder').addClass('fa-folder-open-o')
+                        $(">i", eparent).removeClass(folderclosed).addClass(folderopen)
                     } else {
                         $(e).removeClass('show').addClass('hide')
-                        $(">i", eparent).removeClass('fa-folder-open-o').addClass('fa-folder')
+                        $(">i", eparent).removeClass(folderopen).addClass(folderclosed)
 
                     }
                 })
@@ -344,47 +401,53 @@ $(function () {
             }
         }
         // $("div.music").append(table)
-        if (false) {
-            d = await callit('Pictures/')
-            table = $("<table>").addClass("table").addClass('table-striped')
-            tbody = $("<tbody>")
-            table.append(tbody)
-            let i = 0
-            let tr
-            for (let el of d) {
-                if (!el.directory && ["PNG", "JPEG", "JPG"].indexOf(el.name.toUpperCase().split(".").reverse()[0]) != -1) {
-                    if (i % 5 == 0) {
-                        tr = $("<tr>")
-                        tbody.append(tr)
-                    }
-                    ++i
-                    let td = $("<td>")
-                    tr.append(td)
-                    let img = $("<img>")
-                    td.append(img)
-                    img.attr("src", el.name)
-                    img.attr("class", "thumbnail")
-                    // getdate(img,td)
-                    td.on("click", async function (e) {
-                        let tags = await gettags(e.target)
-                        let img = $("<img>").attr("src", $(e.target).attr("src")).attr("width", "500px")
-                        $('#myModal div.modal-body').empty().append(img)
-                        $('#myModal div.modal-content').css("width", "600px")
-                        $('#myModal div.modal-body').append($("<div>").text(tags["DateTimeOriginal"]))
-                        $('#myModal div.modal-body').append($("<div>").text(`width: ${tags["ImageWidth"]}; height:${tags["ImageHeight"]};`))
-                        $('#myModal div.modal-body').append($("<div>").text(`make: ${tags["Make"]}; model:${tags["Model"]};`))
-                        $('#myModal h5.modal-title').text(decodeURIComponent($("img", e.currentTarget).attr("src")))
-                        $('#myModal').modal('show')
-                        // window.open(e.target.src)
-                    })
-                }
-            }
-            $("div.pictures").append(table)
-        }
+
         // getExif()
         // console.log(d)
     }
-    process('Music/')
+    async function loadpictures() {
+        let d, table, tbody
+        d = await callit('Pictures/')
+        table = $("<table>").addClass("table").addClass('table-striped')
+        tbody = $("<tbody>")
+        table.append(tbody)
+        let i = 0
+        let tr
+        for (let el of d) {
+            if (!el.directory && ["PNG", "JPEG", "JPG"].indexOf(el.name.toUpperCase().split(".").reverse()[0]) != -1) {
+                if (i % 5 == 0) {
+                    tr = $("<tr>")
+                    tbody.append(tr)
+                }
+                ++i
+                let td = $("<td>")
+                tr.append(td)
+                let img = $("<img>")
+                td.append(img)
+                img.attr("src", el.name)
+                img.attr("class", "thumbnail")
+                // getdate(img,td)
+                td.on("click", async function (e) {
+                    let tags = await gettags(e.target)
+                    let img = $("<img>").attr("src", $(e.target).attr("src")).attr("width", "500px")
+                    $('#myModal div.modal-body').empty().append(img)
+                    $('#myModal div.modal-content').css("width", "600px")
+                    $('#myModal div.modal-body').append($("<div>").text(tags["DateTimeOriginal"]))
+                    $('#myModal div.modal-body').append($("<div>").text(`width: ${tags["ImageWidth"]}; height:${tags["ImageHeight"]};`))
+                    $('#myModal div.modal-body').append($("<div>").text(`make: ${tags["Make"]}; model:${tags["Model"]};`))
+                    $('#myModal h5.modal-title').text(decodeURIComponent($("img", e.currentTarget).attr("src")))
+                    $('#myModal').modal('show')
+                    // window.open(e.target.src)
+                })
+            }
+        }
+        $("div.pictures").append(table)
+    }
+    async function load() {
+        await process('Music/')
+        // await loadpictures()
+    }
+    load()
     if (false) {
         function resolveAfter2Seconds() {
             return new Promise(resolve => {
@@ -478,8 +541,12 @@ $(function () {
     }
     function resize() {
         let height = $("body").height() - $(".navbartop").height() - $(".navbarbottom").height() - 50
-        $(".container-main").css('max-height', height)
-        $(".container-main").css('height', height)
+        $("div.container-main").css('max-height', height)
+        $("div.container-main").css('height', height)
+        $("div.musicqueue").css('max-height', height)
+        $("div.music").css('max-height', height)
+        $("div.musiccontainer").css('max-height', height)
     }
     resize()
+    $(window).on('resize', resize)
 })

@@ -35,7 +35,7 @@
                         <a class="nav-link disabled">Disabled</a>
                     </li>
                     -->
-                    <li class="nav-item dropdown">
+                    <li class="nav-item dropdown" style="display:none">
                         <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown"
                             aria-expanded="false">Music queue</a>
                         <ul class="dropdown-menu music">
@@ -44,7 +44,7 @@
                             <li><a class="dropdown-item" href="#">Something else here</a></li>
                         </ul>
                     </li>
-                    <li class="nav-item dropdown">
+                    <li class="nav-item dropdown" style="display:none">
                         <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown"
                             aria-expanded="false">View</a>
                         <ul class="dropdown-menu">
@@ -69,31 +69,31 @@
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarCollapse">
-                    <li class="nav-item">
-                        <div class="audio" style="border:solid yellow 2px;padding : 5px;">
-                        </div>
-                    </li>
-                    <li class="nav-item" style="display:none">
-                        <a class="nav-link active" aria-current="page" href="#">Home</a>
-                    </li>
-                    <li class="nav-item" style="display:none">
-                        <a class="nav-link" href="#">Link</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link disabled" style="display:none">Disabled</a>
-                    </li>
-                    <li class="nav-item dropup" style="display:none">
-                        <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown"
-                            aria-expanded="false">Dropup</a>
-                        <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="#">Action</a></li>
-                            <li><a class="dropdown-item" href="#">Another action</a></li>
-                            <li><a class="dropdown-item" href="#">Something else here</a></li>
-                        </ul>
-                    </li>
-                    <li>
-                        <div id="status">ABCD</div>
-                    </li>
+                <li class="nav-item">
+                    <div class="audio" style="border:solid yellow 2px;padding : 5px;">
+                    </div>
+                </li>
+                <li class="nav-item" style="display:none">
+                    <a class="nav-link active" aria-current="page" href="#">Home</a>
+                </li>
+                <li class="nav-item" style="display:none">
+                    <a class="nav-link" href="#">Link</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link disabled" style="display:none">Disabled</a>
+                </li>
+                <li class="nav-item dropup" style="display:none">
+                    <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown"
+                        aria-expanded="false">Dropup</a>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="#">Action</a></li>
+                        <li><a class="dropdown-item" href="#">Another action</a></li>
+                        <li><a class="dropdown-item" href="#">Something else here</a></li>
+                    </ul>
+                </li>
+                <li>
+                    <div id="status">ABCD</div>
+                </li>
                 </ul>
             </div>
         </div>
@@ -133,9 +133,11 @@
         <i class="fa fa-arrow-down" aria-hidden="true"></i>
     </div>
     <!-- <div class="audio"></div> -->
-    <div class="container-main"
-        style="border:solid red 5px; max-height: 500px; display:flex; flex-direction: column; margin-bottom: 50px;">
-        <div class="container-fluid music" style="overflow:scroll;  min-height: 200px; margin-left: 20px;"></div>
+    <div class="container-main">
+        <div class="musiccontainer table">
+            <div class="container-fluid music table-primary"></div>
+            <div class="container-fluid musicqueue"></div>
+        </div>
         <div class="container-fluid pictures" style="overflow:scroll;  margin-left: 20px;display:none;">
         </div>
     </div>
