@@ -17,6 +17,8 @@ ul.hide {
 
 div.music li {
     color: blue;
+    padding-top: 0px;
+    padding-bottom: 0px;
 }
 
 div.music li:hover {
@@ -84,6 +86,25 @@ div.musicqueue {
     box-shadow: 0 3px 10px rgb(0 0 0 / 0.2);
 }
 
+div.musicqueue.hide, div.music.hide {
+    display: none;
+}
+
+div.musicqueue.show, div.music.show {
+    display: block;
+}
+
+div.musicqueue table> :not(caption)>*>* {
+    /* background: red; */
+    padding-top: 0px;
+    padding-bottom: 0px;
+    min-height: 200px;
+    margin-left: 20px;
+    /* border: solid blue 5px; */
+    margin: 20px 20px 50px 20px;
+    box-shadow: 0 3px 10px rgb(0 0 0 / 0.2);
+}
+
 div.music {
     overflow: scroll;
     min-height: 200px;
@@ -107,3 +128,17 @@ div.container-main {
     margin-bottom: 50px;
 }
 
+@media (max-width: 1000px) {
+    div.musiccontainer {
+        font-size: 2.5rem;
+    }
+
+    div.container-main {
+        font-size: 2.5rem;
+    }
+
+    body {
+        font-size: 2.5rem;
+    }
+
+}

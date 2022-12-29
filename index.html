@@ -134,9 +134,17 @@
     </div>
     <!-- <div class="audio"></div> -->
     <div class="container-main">
+        <ul class="nav">
+            <li class="nav-item">
+                <a class="nav-link active music" aria-current="page" href="#">Music</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link musicqueue" href="#">Queue</a>
+            </li>
+        </ul>
         <div class="musiccontainer table">
             <div class="container-fluid music table-primary"></div>
-            <div class="container-fluid musicqueue"></div>
+            <div class="container-fluid musicqueue hide"></div>
         </div>
         <div class="container-fluid pictures" style="overflow:scroll;  margin-left: 20px;display:none;">
         </div>
@@ -163,6 +171,7 @@
     </div>
 </body>
 
-<script src="index.js"></script>
+<script src="js/zip.js"></script>
+<script src="js/index.js"></script>
 
 </html>
