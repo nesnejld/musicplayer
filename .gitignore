@@ -14,3 +14,8 @@ gradlew
 gradlew.bat
 modal.html
 package-lock.json
+.DS_Store
+*.csv
+*.zip
+*.ipynb
+scripts/hello.sh

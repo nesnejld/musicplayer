@@ -25,7 +25,24 @@ div.music li:hover {
     color: black;
 }
 
-#status {
+div.music a {
+    color: blue;
+}
+
+div.music a:hover {
+    color: black;
+}
+
+div.musicqueue a {
+    color: blue;
+}
+
+div.musicqueue a:hover {
+    color: black;
+    background: gray;
+}
+
+#status, #statustop {
     color: white;
     margin-left: 100px;
     vertical-align: middle;
@@ -52,9 +69,13 @@ ul.dropdown-menu.music {
     overflow-y: auto;
 }
 
+/* a.btn.btn-sm.btn-default:hover {
+    color: blue;
+} */
+
 a.btn.btn-sm.btn-default:hover {
-    color: yellow;
-    background: gray;
+    /* background: gray; */
+    color: black;
 }
 
 html,
@@ -64,6 +85,10 @@ body {
 
 div.audio {
     display: table;
+    border: outset lightgrey 5px;
+    padding: 5px;
+    background: darkgray;
+    margin: 0px;
 }
 
 div.audio span {
@@ -84,6 +109,11 @@ div.musicqueue {
     /* border: solid blue 5px; */
     margin: 20px 20px 50px 20px;
     box-shadow: 0 3px 10px rgb(0 0 0 / 0.2);
+}
+
+
+div.musicqueue table tr {
+    color: blue;
 }
 
 div.musicqueue.hide, div.music.hide {

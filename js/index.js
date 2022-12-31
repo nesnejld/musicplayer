@@ -1,6 +1,9 @@
 $(function () {
     let folderopen = 'fa fa-folder-open';
     let folderclosed = 'fa fa-folder';
+    let musicdirectory = 'Music/';
+    $("div.audio").attr('data-musicdirectory', musicdirectory);
+    let audio = new MusicQueue($("div.audio"), status, statustop);
     let gettree = async function (hrefparent, depth) {
         // console.log(hrefparent)
         // console.log(depth)
@@ -66,139 +69,13 @@ $(function () {
             resolve(allchildren);
         });
     }
-    let audio;
-    function play(url) {
-        return new Promise(resolve => {
-            audio = new Audio(url);
-            audio.controls = true;
-            $("div.audio").empty().append(audio);
-            let span = $(`<span style="color:white"><a class="btn btn-lg stop" href="#"> <i class="fa fa-stop-circle" style="color:white" aria-hidden="true"></i>Stop</a></span>`);
-            $("div.audio").append(span);
-            span.on("click", stop);
-            audio.play();
-            audio.addEventListener('ended', d => {
-                resolve();
-            });
-
-        });
-
+    function status(message) {
+        $("#status").text(message);
     }
-    queue = [];
-    playing = false;
-    function moveup(event) {
-        let q = $(event.target).closest('[data-uri]').attr('data-uri');
-        let i = queue.indexOf(q);
-        if (i > 0) {
-            let qq = queue.splice(i, 1)[0];
-            queue.splice(i - 1, 0, qq);
-            updateq();
-        }
-        event.stopPropagation();
+    function statustop(message) {
+        $("#statustop").text(message);
     }
-    function movetotop(event) {
-        let q = $(event.target).closest('[data-uri]').attr('data-uri');
-        let i = queue.indexOf(q);
-        let qq = queue.splice(i, 1)[0];
-        queue.splice(0, 0, qq);
-        updateq();
-        event.stopPropagation();
-    }
-    function movedown(event) {
-        let q = $(event.target).closest('[data-uri]').attr('data-uri');
-        let i = queue.indexOf(q);
-        if (i != queue.length - 1) {
-            let qq = queue.splice(i, 1)[0];
-            queue.splice(i + 1, 0, qq);
-            updateq();
-        }
-        event.stopPropagation();
-    }
-    function remove(event) {
-        let q = $(event.target).closest('[data-uri]').attr('data-uri');
-        let i = queue.indexOf(q);
-        queue.splice(i, 1);
-        updateq();
-        event.stopPropagation();
-    }
-    function stop() {
-        audio.currentTime = audio.duration;
-    }
-    $("a.btn.btn-sm.stop").on("click", stop);
-    function updateq() {
-        $("ul.dropdown-menu.music").empty();
-        queue.forEach(q => {
-            let li, button, span;
-            li = $("<li>").attr("href", "#").addClass("dropdown-item music").attr("data-uri", q);// .text(decodeURIComponent(q))
-            ///
-            button = $("<a>").addClass("btn btn-sm btn-default");
-            button.on("click", movetotop);
-            span = $("<span>").addClass("fa fa-play");
-            li.append(button.append(span));
-            ///
-            button = $("<a>").addClass("btn btn-sm btn-default");
-            button.on("click", moveup);
-            span = $("<span>").addClass("fa fa-long-arrow-up");
-            li.append(button.append(span));
-            //
-            button = $("<a>").addClass("btn btn-sm btn-default");
-            button.on("click", movedown);
-            span = $("<span>").addClass("fa fa-long-arrow-down");
-            li.append(button.append(span));
-            //
-            button = $("<a>").addClass("btn btn-sm btn-default");
-            button.on("click", remove);
-            span = $("<span>").addClass("fa fa-remove");
-            li.append(button.append(span));
-            li.append($("<span>").text(decodeURIComponent(q).replace(/\/$/, '')));
-            $("ul.dropdown-menu.music").append(li);
-        });
-        $("div.musicqueue").empty();
-        let table = $("<table>").addClass("musicqueue table table-striped text-nowrap table-primary");
-        $("div.musicqueue").append(table);
-        let thead = $("<thead>");
-        table.append(thead);
-        let tbody = $("<tbody>");
-        table.append(tbody);
-        queue.forEach(q => {
-            let tr = $("<tr>");
-            tbody.append(tr);
-            let td = $("<td>").attr("data-uri", q);// .text(decodeURIComponent(q))
-            ///
-            button = $("<a>").addClass("btn btn-sm btn-default");
-            button.on("click", movetotop);
-            span = $("<span>").addClass("fa fa-play");
-            td.append(button.append(span));
-            ///
-            button = $("<a>").addClass("btn btn-sm btn-default");
-            button.on("click", moveup);
-            span = $("<span>").addClass("fa fa-long-arrow-up");
-            td.append(button.append(span));
-            //
-            button = $("<a>").addClass("btn btn-sm btn-default");
-            button.on("click", movedown);
-            span = $("<span>").addClass("fa fa-long-arrow-down");
-            td.append(button.append(span));
-            //
-            button = $("<a>").addClass("btn btn-sm btn-default");
-            button.on("click", remove);
-            span = $("<span>").addClass("fa fa-remove");
-            td.append(button.append(span));
-            tr.append(td);
-            td = $("<td>");
-            td.append($("<span>").text(decodeURIComponent(q).replace(/\/$/, '')));
-            tr.append(td);
-        });
-    }
-    async function playall() {
-        playing = true;
-        while (queue.length > 0) {
-            let url = queue.shift();
-            status(`Playing ${decodeURIComponent(url)}`);
-            updateq();
-            await play(url);
-        }
-        playing = false;
-    }
+    $("a.btn.btn-sm.stop").on("click", audio.stop);
     function getJSON(el) {
         let json = { self: el.self, uri: el.name };
         if (el.children) {
@@ -213,21 +90,11 @@ $(function () {
     function renderJSON(json) {
         let list = $(`<${listtype}>`);
         list.addClass("json hide");
-        function playallchildren(event) {
-            let el = $(event.target).parent();
-            $("li[data-leaf='true']", el).each((i, e) => {
-                queue.push($(e).attr('data-uri'));
-            }
-            );
-            updateq();
-            if (!playing) {
-                playall();
-            }
-            event.stopPropagation();
-        }
         for (let j of json) {
             let li = $("<li>");
-            if (j.children || j.self.toUpperCase().match('\.MP3$') || j.self.toUpperCase().match('\.M4A$') || j.self.toUpperCase().match('\.OGG$')) {
+            if (j.children || j.self.toUpperCase().match('\.MP3$')
+                || j.self.toUpperCase().match('\.M4A$')
+                || j.self.toUpperCase().match('\.OGG$')) {
                 let span = $("<span>");
                 span.text(decodeURIComponent(j.self).replace(/\/$/, '').replace(/\..[A-z]*$/, ''));
                 li.append(span);
@@ -238,21 +105,22 @@ $(function () {
                     // li=$("<li>")
                     // list.append(li)
                     li.prepend($("<i>").addClass(folderclosed).attr("href", '#').css("margin-right", "20px"));
-                    let a = $('<a href="#" class="fa fa-play-circle-o singleplay" style="text-decoration:none;color:blue;"></a>');
+                    let a = $('<a href="#" class="fa fa-play-circle-o singleplay" style="text-decoration:none;"></a>');
                     li.prepend(a);
                     li.
                         append(renderJSON(j.children));
-                    a.on("click", playallchildren);
+                    a.on("click", audio.playallchildren.bind(audio));
                 }
                 else {
-                    let a = $('<a href="#" class="fa fa-play-circle-o singleplay" style="text-decoration:none;color:blue;"></a>');
+                    let a = $('<a href="#" class="fa fa-play-circle-o singleplay" style="text-decoration:none;"></a>');
                     li.prepend(a);
                     a.on('click', function (event) {
-                        queue.push($(event.target).parent().attr('data-uri'));
-                        updateq();
-                        if (!playing) {
-                            playall();
-                        }
+                        // queue.push($(event.target).parent().attr('data-uri'));
+                        // updateq();
+                        // if (!playing) {
+                        //     playall();
+                        // }
+                        audio.add(event);
 
                     });
                     li.attr('data-leaf', true);
@@ -371,7 +239,7 @@ $(function () {
             return;
         });
         // console.log(d)
-        let table = $("<table>").addClass("table").addClass('table-striped');
+        let table = $("<table>").addClass("table"); //.addClass('table-striped');
         let tbody = $("<tbody>");
         table.append(tbody);
         for (let el of d) {
@@ -446,7 +314,7 @@ $(function () {
     async function load() {
         $("div.music").removeClass("show").addClass("hide");
         $("div.musicqueue").removeClass("show").addClass("hide");
-        await process('Music/');
+        await process(musicdirectory);
         $("div.music").removeClass("hide").addClass("show");
         // await loadpictures()
     }
@@ -539,9 +407,6 @@ $(function () {
         $("div.pictures").css("display") == 'none' ? $("div.pictures").show() : $("div.pictures").hide();
 
     });
-    function status(message) {
-        $("#status").text(message);
-    }
     function resize() {
         let height = $("body").height() - $(".navbartop").height() - $(".navbarbottom").height() - 50;
         $("div.container-main").css('max-height', height);
@@ -569,11 +434,11 @@ $(function () {
         zip.add(['../Music/Leon Russell']);
         zip.add(["../Music/David Bowie/Hunky Dory/01 Changes.mp3"]);
         zip.add(['../Music/Eric Clapton']);
-        Changes.mp3;
     }
     $('body').on('zip.done', function () {
         alert('zip done');
         return;
     });
-    backup();
+    $("body").tooltip({ selector: '[data-bs-toggle=tooltip]' });
+    // backup();
 });
