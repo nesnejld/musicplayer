@@ -31,6 +31,7 @@ $(function () {
                                         text = $('a', td).text();
                                     }
                                 });
+                                href = href.startsWith("./") ? href.substring(2) : href;
                                 children.push({ parent: hrefparent, self: href, name: hrefparent + href, directory: directory, depth: depth });
                             }
                         });
@@ -99,6 +100,7 @@ $(function () {
                 span.text(decodeURIComponent(j.self).replace(/\/$/, '').replace(/\..[A-z]*$/, ''));
                 li.append(span);
                 list.append(li);
+                console.log(j.uri);
                 li.attr('data-uri', j.uri);
                 li.attr('data-leaf', false);
                 if (j.children) {
