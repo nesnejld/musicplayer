@@ -1,4 +1,20 @@
 $(function () {
+    function canonicalize(name) {
+        if (name.indexOf("/../") != -1) {
+            return name;
+        }
+        else if (name.indexOf("/./") != -1) {
+            return name.substr(0, name.indexOf("/./")) + name.substr(name.indexOf("/./") + 2);
+        }
+        if (name.startsWith("../")) {
+            return name;
+        }
+        else if (name.startsWith("./")) {
+            return name.substr(2);
+        } else {
+            return name;
+        }
+    }
     let folderopen = 'fa fa-folder-open';
     let folderclosed = 'fa fa-folder';
     let musicdirectory = 'Music/';
@@ -31,8 +47,8 @@ $(function () {
                                         text = $('a', td).text();
                                     }
                                 });
-                                href = href.startsWith("./") ? href.substring(2) : href;
-                                children.push({ parent: hrefparent, self: href, name: hrefparent + href, directory: directory, depth: depth });
+                                let name = canonicalize(hrefparent + href);
+                                children.push({ parent: hrefparent, self: canonicalize(href), name: name, directory: directory, depth: depth });
                             }
                         });
                     }
