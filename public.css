@@ -1,4 +1,4 @@
-.thumbnail {
+$.thumbnail {
     width: 200px;
 }
 
@@ -35,6 +35,13 @@ div.music a:hover {
 
 div.musicqueue a {
     color: blue;
+    background-color: lightgoldenrodyellow;
+}
+
+div.musicqueue td,
+div.musicqueue th {
+    color: blue;
+    background-color: lightgoldenrodyellow;
 }
 
 div.musicqueue a:hover {
@@ -42,7 +49,8 @@ div.musicqueue a:hover {
     background: gray;
 }
 
-#status, #statustop {
+#status,
+#statustop {
     color: white;
     margin-left: 100px;
     vertical-align: middle;
@@ -116,11 +124,13 @@ div.musicqueue table tr {
     color: blue;
 }
 
-div.musicqueue.hide, div.music.hide {
+div.musicqueue.hide,
+div.music.hide {
     display: none;
 }
 
-div.musicqueue.show, div.music.show {
+div.musicqueue.show,
+div.music.show {
     display: block;
 }
 
@@ -158,6 +168,12 @@ div.container-main {
     margin-bottom: 50px;
 }
 
+div.thumbnail {
+    /* background-color: purple; */
+    background-color: white;
+    box-shadow: 10px 5px 5px black;
+}
+
 @media (max-width: 1000px) {
     div.musiccontainer {
         font-size: 2.5rem;
@@ -171,4 +187,27 @@ div.container-main {
         font-size: 2.5rem;
     }
 
+}
+
+li.node.leaf {
+    /* background-color: lightslategray; */
+    background-color: white;
+}
+
+li.node.leaf span {
+    background-color: white;
+    box-shadow: 10px 5px 5px lightgrey;
+}
+
+li.node.dir {
+    /* background-color: lightpink; */
+    /* background-color: darkgray; */
+    background-color: white;
+    box-shadow: 10px 5px 5px black;
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+
+.nav-link.active {
+    background-color: blue;
 }

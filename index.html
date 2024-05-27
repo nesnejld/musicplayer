@@ -102,11 +102,11 @@
         </div>
     </nav>
     <div>
-        <div style="display:none;"> <a href="Music">Music</a>
+        <!-- <div style="display:none;"> <a href="Music">Music</a>
             <button type="button" class="btn btn-primary music" data-toggle="collpase">Music</button>
             <a href="Pictures">Pictures</a>
             <button type="button" class="btn btn-primary pictures">Pictures</button>
-        </div>
+        </div> -->
         <!-- Button HTML (to Trigger Modal) -->
         <!-- <a href="#myModal" role="button" class="btn btn-lg btn-primary" data-bs-toggle="modal">Launch Demo Modal</a> -->
 
@@ -137,19 +137,25 @@
     </div>
     <!-- <div class="audio"></div> -->
     <div class="container-main">
-        <ul class="nav">
-            <li class="nav-item">
-                <a class="nav-link active music" aria-current="page" href="#">Music</a>
+        <ul class="nav nav-tabs" id="myTab" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="music-tab" data-bs-toggle="tab" data-bs-target="#music"
+                    type="button" role="tab" aria-controls="music" aria-selected="true">Music</button>
             </li>
-            <li class="nav-item">
-                <a class="nav-link musicqueue" href="#">Queue</a>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="queue-tab" data-bs-toggle="tab" data-bs-target="#queue" type="button"
+                    role="tab" aria-controls="queue" aria-selected="false">Queue</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="pictures-tab" data-bs-toggle="tab" data-bs-target="#pictures" type="button"
+                    role="tab" aria-controls="pictures" aria-selected="false">Pictures</button>
             </li>
         </ul>
-        <div class="musiccontainer table">
-            <div class="container-fluid music table-primary"></div>
-            <div class="container-fluid musicqueue hide"></div>
-        </div>
-        <div class="container-fluid pictures" style="overflow:scroll;  margin-left: 20px;display:none;">
+        <div class="tab-content" id="myTabContent">
+            <div class="tab-pane music fade table-primary active" role="tabpanel" id="music"></div>
+            <div class="tab-pane musicqueue fade table-primary" role="tabpanel" id="queue"></div>
+            <div class="tab-pane pictures fade table-primary" role="tabpanel" id="pictures" style="overflow:scroll;">
+            </div>
         </div>
     </div>
     <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
@@ -174,8 +180,10 @@
     </div>
 </body>
 
+<script src="node_modules/requirejs/require.js"></script>
 <script src="js/zip.js"></script>
 <script src="js/musicqueue.js"></script>
+<!-- <script src="js/flatten.js"></script> -->
 <script src="js/index.js"></script>
 
 </html>

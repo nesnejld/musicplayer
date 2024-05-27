@@ -1,13 +1,25 @@
+const jspaths = {
+    flatten: 'js/flatten'
+};
+
+require.config({
+    paths: jspaths,
+    waitSeconds: 200,
+});
+
 $(function () {
     function canonicalize(name) {
         if (name.indexOf("/../") != -1) {
-            return name;
+            let i = name.indexOf("/../");
+            let path = name.substr(0, i);
+            path = path.substr(0, path.lastIndexOf('/'));
+            return path + name.substr(i + 3);
         }
         else if (name.indexOf("/./") != -1) {
             return name.substr(0, name.indexOf("/./")) + name.substr(name.indexOf("/./") + 2);
         }
         if (name.startsWith("../")) {
-            return name;
+            throw new Exception();
         }
         else if (name.startsWith("./")) {
             return name.substr(2);
@@ -109,6 +121,7 @@ $(function () {
         list.addClass("json hide");
         for (let j of json) {
             let li = $("<li>");
+            li.addClass("node");
             if (j.children || j.self.toUpperCase().match('\.MP3$')
                 || j.self.toUpperCase().match('\.M4A$')
                 || j.self.toUpperCase().match('\.OGG$')) {
@@ -122,6 +135,7 @@ $(function () {
                 if (j.children) {
                     // li=$("<li>")
                     // list.append(li)
+                    li.addClass("dir");
                     li.prepend($("<i>").addClass(folderclosed).attr("href", '#').css("margin-right", "20px"));
                     let a = $('<a href="#" class="fa fa-play-circle-o singleplay" style="text-decoration:none;"></a>');
                     li.prepend(a);
@@ -130,6 +144,7 @@ $(function () {
                     a.on("click", audio.playallchildren.bind(audio));
                 }
                 else {
+                    li.addClass("leaf");
                     let a = $('<a href="#" class="fa fa-play-circle-o singleplay" style="text-decoration:none;"></a>');
                     li.prepend(a);
                     a.on('click', function (event) {
@@ -139,7 +154,6 @@ $(function () {
                         //     playall();
                         // }
                         audio.add(event);
-
                     });
                     li.attr('data-leaf', true);
                 }
@@ -291,7 +305,57 @@ $(function () {
         // getExif()
         // console.log(d)
     }
-    async function loadpictures() {
+    function savefile(filename, data, mimetype) {
+        let blob = new Blob([data], { type: mimetype });
+        let link = document.createElement("a");
+        link.download = filename;
+        //link.innerHTML = "Download File";
+        link.href = window.URL.createObjectURL(blob);
+        document.body.appendChild(link);
+        link.onclick = () => {
+            setTimeout(() => {
+                document.body.removeChild(link);
+                window.URL.revokeObjectURL(link.href);
+            }, 100);
+        };
+        link.click();
+    }
+    function saveurl(filename, url) {
+        let link = document.createElement("a");
+        link.download = filename;
+        //link.innerHTML = "Download File";
+        // link.href = window.URL.createObjectURL(blob);
+        link.href = url;
+        document.body.appendChild(link);
+        link.onclick = () => {
+            setTimeout(() => {
+                document.body.removeChild(link);
+                window.URL.revokeObjectURL(link.href);
+            }, 100);
+        };
+        link.click();
+    }
+    function getbinarydata(filename) {
+        return new Promise(function (resolve, reject) {
+            var oReq = new XMLHttpRequest();
+            // oReq.open("GET", "Pictures/Screenshot from 2023-06-22 17-30-39.png", true);
+            oReq.open("GET", filename, true);
+            oReq.responseType = "arraybuffer";
+
+            oReq.onload = function (oEvent) {
+                var arrayBuffer = oReq.response;
+                let t = filename.substr(filename.lastIndexOf(".") + 1);
+                var byteArray = new Uint8Array(arrayBuffer);
+                // var blob = new Blob([arrayBuffer], { type: `image/${t}` });
+                var blob = new Blob([arrayBuffer], { type: 'application/octet-stream' });
+                var url = URL.createObjectURL(blob);
+                resolve(url);
+            };
+
+            oReq.send();
+        });
+    }
+    async function loadpictures0() {
         let d, table, tbody;
         d = await callit('Pictures/');
         table = $("<table>").addClass("table").addClass('table-striped');
@@ -308,23 +372,222 @@ $(function () {
                 ++i;
                 let td = $("<td>");
                 tr.append(td);
+                let div = $("<div>");
+                div.attr("class", "thumbnail");
+                td.append(div);
+                div.css("display", "flex");
+                div.css("flex-direction", "column");
+                let imgdiv = $("<div>").addClass("image");
+                let topdiv = $("<div>").addClass("top");
+                let bottomdiv = $("<div>").addClass("bottom");
+                let filename = decodeURI(el.self);
+                let name = decodeURI(el.name);
+                topdiv.text(name);
+                div.append(topdiv);
+                div.append(imgdiv);
+                div.append(bottomdiv);
+                // let anchor = $("<a>").attr("href", name).attr("download", `/tmp/${name}`).text(name);
+                // bottomdiv.append(anchor);
+                // div3.append('<button type="button" class="btn btn-primary btn-small">Primary</button>');
+                // div3.append('<button class="btn"><i class="fa fa-home"></i></button>');
+                let download = $('<button class="btn"><i class="fa fa-download"></i></button>');
+                let trash = $('<button class="btn"><i class="fa fa-trash"></i></button>');
+                let rotate = $('<button class="btn"><i class="fa fa-rotate"></i></button>');
+                topdiv.append(download);
+                topdiv.append(trash);
+                // div3.append('<button class="btn"><i class="fa fa-close"></i></button>');
+                // div3.append('<button class="btn"><i class="fa fa-folder"></i></button>');
                 let img = $("<img>");
-                td.append(img);
+                imgdiv.append(img);
                 img.attr("src", el.name);
                 img.attr("class", "thumbnail");
+                img.attr("width", "250px");
+                img.attr("transform", "rotate(0)");
                 // getdate(img,td)
-                td.on("click", async function (e) {
+                img.on("click", async function (e) {
                     let tags = await gettags(e.target);
                     let img = $("<img>").attr("src", $(e.target).attr("src")).attr("width", "500px");
+                    let imageWidth = "ImageWidth" in tags ? tags["ImageWidth"] : tags["PixelXDimension"];
+                    let imageHeight = "ImageHeight" in tags ? tags["ImageHeight"] : tags["PixelYDimension"];
                     $('#myModal div.modal-body').empty().append(img);
                     $('#myModal div.modal-content').css("width", "600px");
                     $('#myModal div.modal-body').append($("<div>").text(tags["DateTimeOriginal"]));
-                    $('#myModal div.modal-body').append($("<div>").text(`width: ${tags["ImageWidth"]}; height:${tags["ImageHeight"]};`));
+                    $('#myModal div.modal-body').append($("<div>").text(`width: ${imageWidth}; height:${imageHeight};`));
                     $('#myModal div.modal-body').append($("<div>").text(`make: ${tags["Make"]}; model:${tags["Model"]};`));
                     $('#myModal h5.modal-title').text(decodeURIComponent($("img", e.currentTarget).attr("src")));
                     $('#myModal').modal('show');
                     // window.open(e.target.src)
                 });
+                download.on("click", async function (e) {
+                    console.log(`download ${filename}`);
+                    // anchor.trigger('click');
+                    $.get(name).then(async function (d) {
+                        let url = await getbinarydata(name);
+                        // savefile(`/tmp/${name}`, d, 'image/png');
+                        saveurl(filename, url);
+                        return;
+                    });
+                });
+                trash.on("click", async function (e) {
+                    console.log(`trash ${filename}`);
+                    $.get(`/cgi-bin/commands.py?command=pwd`).then(function (d) {
+                        return;
+                    });
+                    $.get(`/cgi-bin/commands.py?command=delete&filename=${name}`).then(async function (d) {
+                        console.log(d);
+                        $('#pictures').empty();
+                        await loadpictures();
+                        return;
+                    });
+                    $.get(`/cgi-bin/commands.py?command=list&filename=${name}`).then(function (d) {
+                        return;
+                    });
+                    $.ajax({
+                        url: '/aaaa',
+                        type: 'DELETE',
+                        success: function (result) {
+                            // Do something with the result 
+                        }
+                    });
+                    await $.ajax({
+                        type: 'OPTIONS',
+                        success: function (result) {
+                            console.log(result);
+                            return;
+                        }
+                    });
+                    await $.ajax({
+                        type: 'HEAD',
+                        url: '/aaaa',
+                        success: function (result) {
+                            console.log(result);
+                            return;
+                        }
+                    });
+                }
+                );
+            }
+        }
+        $("div.pictures").append(table);
+    }
+    async function loadpictures() {
+        let d, table, tbody;
+        d = await callit('Pictures/');
+        // savefile("/tmp/pictures.json", JSON.stringify(d, undefined, 2), "application/json");
+        require(["flatten"], function (flatten) {
+            $("div.pictures").append(flatten.tabulate('Pictures/', flatten.flatten(d)));
+            return;
+        });
+        // d = flatten(d);
+        return;
+        table = $("<table>").addClass("table").addClass('table-striped');
+        tbody = $("<tbody>");
+        table.append(tbody);
+        let i = 0;
+        let tr;
+        for (let el of d) {
+            if (!el.directory && ["PNG", "JPEG", "JPG"].indexOf(el.name.toUpperCase().split(".").reverse()[0]) != -1) {
+                if (i % 5 == 0) {
+                    tr = $("<tr>");
+                    tbody.append(tr);
+                }
+                ++i;
+                let td = $("<td>");
+                tr.append(td);
+                let div = $("<div>");
+                div.attr("class", "thumbnail");
+                td.append(div);
+                div.css("display", "flex");
+                div.css("flex-direction", "column");
+                let imgdiv = $("<div>").addClass("image");
+                let topdiv = $("<div>").addClass("top");
+                let bottomdiv = $("<div>").addClass("bottom");
+                let filename = decodeURI(el.self);
+                let name = decodeURI(el.name);
+                topdiv.text(name);
+                div.append(topdiv);
+                div.append(imgdiv);
+                div.append(bottomdiv);
+                // let anchor = $("<a>").attr("href", name).attr("download", `/tmp/${name}`).text(name);
+                // bottomdiv.append(anchor);
+                // div3.append('<button type="button" class="btn btn-primary btn-small">Primary</button>');
+                // div3.append('<button class="btn"><i class="fa fa-home"></i></button>');
+                let download = $('<button class="btn"><i class="fa fa-download"></i></button>');
+                let trash = $('<button class="btn"><i class="fa fa-trash"></i></button>');
+                let rotate = $('<button class="btn"><i class="fa fa-rotate"></i></button>');
+                topdiv.append(download);
+                topdiv.append(trash);
+                // div3.append('<button class="btn"><i class="fa fa-close"></i></button>');
+                // div3.append('<button class="btn"><i class="fa fa-folder"></i></button>');
+                let img = $("<img>");
+                imgdiv.append(img);
+                img.attr("src", el.name);
+                img.attr("class", "thumbnail");
+                img.attr("width", "250px");
+                img.attr("transform", "rotate(0)");
+                // getdate(img,td)
+                img.on("click", async function (e) {
+                    let tags = await gettags(e.target);
+                    let img = $("<img>").attr("src", $(e.target).attr("src")).attr("width", "500px");
+                    let imageWidth = "ImageWidth" in tags ? tags["ImageWidth"] : tags["PixelXDimension"];
+                    let imageHeight = "ImageHeight" in tags ? tags["ImageHeight"] : tags["PixelYDimension"];
+                    $('#myModal div.modal-body').empty().append(img);
+                    $('#myModal div.modal-content').css("width", "600px");
+                    $('#myModal div.modal-body').append($("<div>").text(tags["DateTimeOriginal"]));
+                    $('#myModal div.modal-body').append($("<div>").text(`width: ${imageWidth}; height:${imageHeight};`));
+                    $('#myModal div.modal-body').append($("<div>").text(`make: ${tags["Make"]}; model:${tags["Model"]};`));
+                    $('#myModal h5.modal-title').text(decodeURIComponent($("img", e.currentTarget).attr("src")));
+                    $('#myModal').modal('show');
+                    // window.open(e.target.src)
+                });
+                download.on("click", async function (e) {
+                    console.log(`download ${filename}`);
+                    // anchor.trigger('click');
+                    $.get(name).then(async function (d) {
+                        let url = await getbinarydata(name);
+                        // savefile(`/tmp/${name}`, d, 'image/png');
+                        saveurl(filename, url);
+                        return;
+                    });
+                });
+                trash.on("click", async function (e) {
+                    console.log(`trash ${filename}`);
+                    $.get(`/cgi-bin/commands.py?command=pwd`).then(function (d) {
+                        return;
+                    });
+                    $.get(`/cgi-bin/commands.py?command=delete&filename=${name}`).then(async function (d) {
+                        console.log(d);
+                        $('#pictures').empty();
+                        await loadpictures();
+                        return;
+                    });
+                    $.get(`/cgi-bin/commands.py?command=list&filename=${name}`).then(function (d) {
+                        return;
+                    });
+                    $.ajax({
+                        url: '/aaaa',
+                        type: 'DELETE',
+                        success: function (result) {
+                            // Do something with the result 
+                        }
+                    });
+                    await $.ajax({
+                        type: 'OPTIONS',
+                        success: function (result) {
+                            console.log(result);
+                            return;
+                        }
+                    });
+                    await $.ajax({
+                        type: 'HEAD',
+                        url: '/aaaa',
+                        success: function (result) {
+                            console.log(result);
+                            return;
+                        }
+                    });
+                }
+                );
             }
         }
         $("div.pictures").append(table);
@@ -332,6 +595,7 @@ $(function () {
     async function load() {
         $("div.music").removeClass("show").addClass("hide");
         $("div.musicqueue").removeClass("show").addClass("hide");
+        $("div.pictures").removeClass("show").addClass("hide");
         await process(musicdirectory);
         $("div.music").removeClass("hide").addClass("show");
         // await loadpictures()
@@ -419,6 +683,9 @@ $(function () {
     });
     $("a.dropdown-item.pictures").on("click", function (e) {
         $("div.pictures").css("display") == 'none' ? $("div.pictures").show() : $("div.pictures").hide();
+        $.get("Pictures").then(function (d) {
+            return;
+        });
 
     });
     $("button.pictures").on("click", function (e) {
@@ -430,6 +697,7 @@ $(function () {
         $("div.container-main").css('max-height', height);
         $("div.container-main").css('height', height);
         $("div.musicqueue").css('max-height', height);
+        $("div.pictures").css('max-height', height);
         $("div.music").css('max-height', height);
         $("div.musiccontainer").css('max-height', height);
     }
@@ -438,11 +706,17 @@ $(function () {
     $("div.container-main>ul a.music").on("click", function () {
         $("div.music").removeClass("hide").addClass("show");
         $("div.musicqueue").removeClass("show").addClass("hide");
+        $("div.pictures").removeClass("show").addClass("hide");
     });
-    $("div.container-main>ul a.musicqueue").on("click", function () {
+    $("div.container-main>ul a.pictures").on("click", function () {
         $("div.music").removeClass("show").addClass("hide");
-        $("div.musicqueue").removeClass("hide").addClass("show");
+        $("div.musicqueue").removeClass("show").addClass("hide");
+        $("div.pictures").removeClass("hide").addClass("hide");
     });
+    // $("div.container-main>ul a.musicqueue").on("click", function () {
+    //     $("div.music").removeClass("show").addClass("hide");
+    //     $("div.musicqueue").removeClass("hide").addClass("show");
+    // });
     function backup() {
         let zip = new Zip($('body'));
         zip.add(['../Music/Bob Dylan/Another Self Portrait (1969-1971) The Bootleg Series, Vol 10/01-41- It Aint Me, Babe (Live with The Band, Isle Of Wight - Remix.mp3',
@@ -458,5 +732,14 @@ $(function () {
         return;
     });
     $("body").tooltip({ selector: '[data-bs-toggle=tooltip]' });
+    $('[data-bs-toggle="tab"]').on('show.bs.tab', async function (event) {
+        let t = event.target;
+        let divtab = $($(t).attr("data-bs-target"));
+        if (divtab.attr("id") == 'pictures') {
+            $('#pictures').empty();
+            await loadpictures();
+        }
+        return;
+    });
     // backup();
 });
