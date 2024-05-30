@@ -51,7 +51,7 @@ try:
         print(f"""command: {result["command"]}""")
         print(f"""output: {result["stdout"]}""")
         print(f"""errors: {result["stderr"]}""")
-        command = f"""mv '{filename}' /tmp"""
+        command = f"""mv -v '{filename}' {os.environ["HOME"]}/tmp"""
         result = runcommand(command)
         print(f"""command: {result["command"]}""")
         print(f"""output: {result["stdout"]}""")
