@@ -221,11 +221,13 @@ define(["overlay"], function (Overlay) {
                     let download = $('<button>').addClass("btn").append($("<i>").addClass("fa fa-download").css("color", "var(--bs-link-color)"));
                     let trash = $('<button>').addClass("btn").append($("<i>").addClass("fa fa-trash").css("color", "var(--bs-link-color)"));
                     let rotate = $('<button>').addClass("btn").append($("<i>").addClass("fa fa-rotate-right").css("color", "var(--bs-link-color)"));
+                    let select = $('<input>').addClass("form-check-input").css({ "position": "relative", "top": "7px", "left": "10px" }).attr({ "type": "checkbox", "value": "somthing" });
                     let buttonbar = $("<div>");
                     topdiv.append(buttonbar);
                     buttonbar.append(download);
                     buttonbar.append(trash);
                     buttonbar.append(rotate);
+                    buttonbar.append(select);
                     // div3.append('<button class="btn"><i class="fa fa-close"></i></button>');
                     // div3.append('<button class="btn"><i class="fa fa-folder"></i></button>');
                     let img = $("<img>");
@@ -289,6 +291,10 @@ define(["overlay"], function (Overlay) {
                         console.log(angle);
                     }
                     );
+                    select.on('change', e => {
+                        console.log($(e.currentTarget).is(":checked"));
+                        return;
+                    });
                 }
                 tr.append(td);
             }

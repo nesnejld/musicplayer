@@ -1,13 +1,14 @@
 const jspaths = {
     flatten: 'js/flatten',
-    overlay: 'js/overlay'
+    overlay: 'js/overlay',
+    musicqueue: 'js/musicqueue'
 };
 
 require.config({
     paths: jspaths,
     waitSeconds: 200,
 });
-require(["flatten", "overlay"], function (result, Overlay) {
+require(["flatten", "overlay", "musicqueue"], function (result, Overlay, MusicQueue) {
     let FileTree = result.FileTree;
     $(function () {
         // function canonicalize(name) {
@@ -126,7 +127,10 @@ require(["flatten", "overlay"], function (result, Overlay) {
                 li.addClass("node");
                 if (j.children || j.self.toUpperCase().match('\.MP3$')
                     || j.self.toUpperCase().match('\.M4A$')
-                    || j.self.toUpperCase().match('\.OGG$')) {
+                    || j.self.toUpperCase().match('\.OGG$')
+                    || j.self.toUpperCase().match('\.AIFF$')
+                    || j.self.toUpperCase().match('\.WAV$')
+                ) {
                     let span = $("<span>");
                     span.text(decodeURIComponent(j.self).replace(/\/$/, '').replace(/\..[A-z]*$/, ''));
                     li.append(span);
