@@ -1,0 +1,266 @@
+.thumbnail {
+    width: 400px;
+}
+
+td.music {
+    color: red;
+}
+
+td.music:hover {
+    color: blue;
+}
+
+ol.hide,
+ul.hide {
+    display: none;
+}
+
+div.music li {
+    color: var(--bs-link-color);
+    padding-top: 0px;
+    padding-bottom: 0px;
+}
+
+div.music li:hover {
+    color: black;
+}
+
+div.music a {
+    color: var(--bs-link-color);
+}
+
+div.music a:hover {
+    color: black;
+}
+
+div.musicqueue a {
+    color: var(--bs-link-color);
+    /* background-color: lightgoldenrodyellow; */
+}
+
+div.musicqueue td,
+div.musicqueue th {
+    color: blue;
+    /* background-colo1r: lightgoldenrodyellow; */
+}
+
+div.musicqueue a:hover {
+    color: black;
+    background: gray;
+}
+
+#status,
+#statustop {
+    color: white;
+    margin-left: 100px;
+    vertical-align: middle;
+}
+
+div.music ul {
+    list-style-type: none;
+}
+
+li.dropdown-item.music span.fa:hover {
+    color: black;
+}
+
+li.dropdown-item.music:hover {
+    color: blue
+}
+
+P li.dropdown-item.music span.fa {
+    color: blue;
+}
+
+ul.dropdown-menu.music {
+    max-height: 500px;
+    overflow-y: auto;
+}
+
+/* a.btn.btn-sm.btn-default:hover {
+    color: blue;
+} */
+
+a.btn.btn-sm.btn-default:hover {
+    /* background: gray; */
+    color: black;
+}
+
+html,
+body {
+    height: 100%;
+}
+
+div.audio {
+    display: table;
+    border: outset lightgrey 5px;
+    padding: 5px;
+    background: darkgray;
+    margin: 0px;
+}
+
+div.audio span {
+    color: white;
+    display: table-cell;
+    vertical-align: middle;
+}
+
+.singleplay {
+    margin-right: 20px;
+}
+
+div.musicqueue {
+    /* background: red; */
+    overflow: scroll;
+    min-height: 200px;
+    margin-left: 20px;
+    /* border: solid blue 5px; */
+    margin: 20px 20px 50px 20px;
+    box-shadow: 0 3px 10px rgb(0 0 0 / 0.2);
+}
+
+
+div.musicqueue table tr {
+    color: blue;
+}
+
+div.musicqueue.hide,
+div.music.hide {
+    display: none;
+}
+
+div.musicqueue.show,
+div.music.show {
+    display: block;
+}
+
+div.musicqueue table> :not(caption)>*>* {
+    /* background: red; */
+    padding-top: 0px;
+    padding-bottom: 0px;
+    min-height: 200px;
+    margin-left: 20px;
+    /* border: solid blue 5px; */
+    margin: 20px 20px 50px 20px;
+    box-shadow: 0 3px 10px rgb(0 0 0 / 0.2);
+}
+
+div.music {
+    overflow: scroll;
+    min-height: 200px;
+    margin: 20px 20px 50px 20px;
+    /* background: antiquewhite; */
+    box-shadow: 0 3px 10px rgb(0 0 0 / 0.2);
+}
+
+div.musiccontainer {
+    display: flex;
+    flex-direction: row;
+    max-height: 600px;
+    /* border: solid green 2px; */
+}
+
+div.container-main {
+    /* border: solid red 5px; */
+    max-height: 500px;
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 50px;
+}
+
+div.thumbnail {
+    /* background-color: purple; */
+    background-color: white;
+    box-shadow: 10px 5px 5px black;
+}
+
+@media (max-width: 1000px) {
+    div.musiccontainer {
+        font-size: 2.5rem;
+    }
+
+    div.container-main {
+        font-size: 2.5rem;
+    }
+
+    body {
+        font-size: 2.5rem;
+    }
+
+}
+
+li.node.leaf {
+    /* background-color: lightslategray; */
+    background-color: white;
+}
+
+li.node.leaf span {
+    background-color: white;
+    box-shadow: 10px 5px 5px lightgrey;
+}
+
+li.node.dir {
+    /* background-color: lightpink; */
+    /* background-color: darkgray; */
+    background-color: white;
+    box-shadow: 10px 5px 5px black;
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+
+.nav-link.active {
+    background-color: var(--bs-link-color);
+}
+
+.arrowup {
+    position: fixed;
+    background-color: antiquewhite;
+    width: 100%;
+    z-index: 100;
+}
+
+#overlay {
+    position: fixed;
+    /* Sit on top of the page content */
+    display: none;
+    /* Hidden by default */
+    width: 100%;
+    /* Full width (cover the whole page) */
+    height: 100%;
+    /* Full height (cover the whole page) */
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 255, 0.5);
+    /* blue background with opacity */
+    z-index: 2;
+    /* Specify a stack order in case you're using a different order for other elements */
+    cursor: pointer;
+    /* Add a pointer on hover */
+    color: black;
+}
+
+#overlaytext {
+    position: fixed;
+    /* Sit on top of the page content */
+    /* display: block; */
+    /* Hidden by default */
+    width: 100%;
+    /* Full width (cover the whole page) */
+    height: 100%;
+    /* Full height (cover the whole page) */
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 5;
+    /* Specify a stack order in case you're using a different order for other elements */
+    cursor: pointer;
+    /* Add a pointer on hover */
+    color: black;
+    font-size: 3em;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
