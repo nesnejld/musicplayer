@@ -240,7 +240,9 @@ define([], function () {
             event.stopPropagation();
         }
         play(url) {
-            this.status(`Playing ${decodeURIComponent(url)}`);
+            let msg = decodeURIComponent(url);
+            msg = msg.substring(msg.lastIndexOf('/') + 1);
+            this.status(`Playing ${msg}`);
             let audio = this.newaudio(url);
             audio.play();
             // this.audio = new Audio(url);

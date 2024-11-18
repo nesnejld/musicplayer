@@ -8,9 +8,59 @@ require.config({
     paths: jspaths,
     waitSeconds: 200,
 });
+
 require(["flatten", "overlay", "musicqueue"], function (result, Overlay, MusicQueue) {
-    let FileTree = result.FileTree;
     $(function () {
+        const worker = new Worker("js/worker.js");
+        let json = null;
+        Overlay.text('Loading music ....');
+        Overlay.show();
+        worker.onmessage = (e) => {
+            if (e.data.type == 'result') {
+                // console.log(e.data);
+                // $("#status").text(JSON.stringify(e.data, null, 2));
+                json = e.data.data;
+                let ol = renderJSON(json.children);
+                ol.removeClass("hide");
+                let selector = "div.music";
+                $(selector).empty().append(ol);
+                $('li', $(selector)).on("click", function (event) {
+                    event.stopPropagation();
+                    let eparent = $(event.target).parent();
+                    if ($(">" + listtype, eparent).length > 0) {
+                        $(">" + listtype, eparent).each((i, e) => {
+                            if ($(e).hasClass('hide')) {
+                                $(e).removeClass('hide').addClass('show');
+                                $(">i", eparent).removeClass(folderclosed).addClass(folderopen);
+                            } else {
+                                $(e).removeClass('show').addClass('hide');
+                                $(">i", eparent).removeClass(folderopen).addClass(folderclosed);
+
+                            }
+                        });
+                    }
+                    else {
+                        // queue.push($(event.target).attr('data-uri'))
+                        // updateq()
+                        // if (!playing) {
+                        //     playall()
+                        // }
+                    }
+                    return;
+                });
+                $("div.music").removeClass("hide").addClass("show");
+                Overlay.hide();
+                // console.log("Message received from worker");
+            }
+            else if (e.data.type == 'url') {
+                // console.log(e.data.url);
+                $("#status").text(e.data.url);
+                // console.log("Message received from worker");
+            }
+        };
+        worker.postMessage([]);
+        let FileTree = result.FileTree;
+
         // function canonicalize(name) {
         //     if (name.indexOf("/../") != -1) {
         //         let i = name.indexOf("/../");
@@ -78,36 +128,17 @@ require(["flatten", "overlay", "musicqueue"], function (result, Overlay, MusicQu
             });
 
         }
-        // async function callit(directory) {
-        //     return new Promise(async function (resolve) {
-        //         let allchildren = await gettree(directory, 0);
-        //         children = allchildren;
-        //         while (true) {
-        //             if (!children || children.length == 0) {
-        //                 break;
-        //             }
-        //             let nextchildren = [];
-        //             for (c of children) {
-        //                 if (c.directory) {
-        //                     cc = await gettree(c.name, c.depth + 1);
-        //                     c.children = cc;
-        //                     // console.log(cc)
-        //                     nextchildren = nextchildren.concat(cc);
-        //                 }
-        //             }
-        //             allchildren = allchildren.concat(nextchildren);
-        //             children = nextchildren.filter(c => c.directory);
-        //         }
-        //         resolve(allchildren);
-        //     });
-        // }
+
         function status(message) {
             $("#status").text(message);
         }
         function statustop(message) {
             $("#statustop").text(message);
         }
-        $("a.btn.btn-sm.stop").on("click", audio.stop);
+        // $("#status").on("updatemusic", (e, filename) => {
+        //     $("#status").text(filename);
+        // });
+        // $("a.btn.btn-sm.stop").on("click", audio.stop);
         function getJSON(el) {
             let json = { self: el.self, uri: el.name };
             if (el.children) {
@@ -125,19 +156,28 @@ require(["flatten", "overlay", "musicqueue"], function (result, Overlay, MusicQu
             for (let j of json) {
                 let li = $("<li>");
                 li.addClass("node");
+                if (!j.self) {
+                    j.self = j.text;
+                }
+                if (!j.uri) {
+                    j.uri = j.href;
+                }
                 if (j.children || j.self.toUpperCase().match('\.MP3$')
                     || j.self.toUpperCase().match('\.M4A$')
                     || j.self.toUpperCase().match('\.OGG$')
-                    || j.self.toUpperCase().match('\.AIFF$')
                     || j.self.toUpperCase().match('\.WAV$')
                 ) {
                     let span = $("<span>");
-                    span.text(decodeURIComponent(j.self).replace(/\/$/, '').replace(/\..[A-z]*$/, ''));
+                    // span.text(decodeURIComponent(j.self).replace(/\/$/, '').replace(/\..[A-z]*$/, ''));
+                    span.text(j.self.replace(/\/$/, ''));
                     li.append(span);
                     list.append(li);
                     // Overlay.text(decodeURI(j.uri));
-                    $("#status").text(decodeURI(j.uri));
-                    console.log(j.uri);
+                    // $("#status").trigger("updatemusic", decodeURI(j.uri));
+                    // $("#status").text(decodeURI(j.uri));
+                    // $("#status").parent().parent().css({ display: 'none' });
+                    // $("#status").parent().parent().css({ display: 'block' });
+                    // console.log(j.uri);
                     li.attr('data-uri', j.uri);
                     li.attr('data-leaf', false);
                     if (j.children) {
@@ -169,7 +209,7 @@ require(["flatten", "overlay", "musicqueue"], function (result, Overlay, MusicQu
             }
             return list;
         }
-        async function process(directory) {
+        async function process(directory, e) {
             let d = await FileTree.callit(directory);
             let json = [];
             for (let el of d) {
@@ -182,6 +222,7 @@ require(["flatten", "overlay", "musicqueue"], function (result, Overlay, MusicQu
             ol.removeClass("hide");
             let selector = "div.music";
             $(selector).empty().append(ol);
+            e.trigger("loaddirectorydone");
             /*
             $.contextMenu({
                 // define which elements trigger this menu
@@ -334,11 +375,20 @@ require(["flatten", "overlay", "musicqueue"], function (result, Overlay, MusicQu
             $("div.music").removeClass("show").addClass("hide");
             $("div.musicqueue").removeClass("show").addClass("hide");
             $("div.pictures").removeClass("show").addClass("hide");
-            await process(musicdirectory);
-            $("div.music").removeClass("hide").addClass("show");
-            Overlay.hide();
+            if (false) {
+                await process(musicdirectory);
+                $("div.music").removeClass("hide").addClass("show");
+                Overlay.hide();
+            } else {
+                $("div.music").off("loaddirectorydone").on("loaddirectorydone", evt => {
+                    $("div.music").removeClass("hide").addClass("show");
+                    Overlay.hide();
+                });
+                process(musicdirectory, $("div.music"));
+
+            }
         }
-        load();
+        // load();
         if (false) {
             function resolveAfter2Seconds() {
                 return new Promise(resolve => {
@@ -431,7 +481,8 @@ require(["flatten", "overlay", "musicqueue"], function (result, Overlay, MusicQu
 
         });
         function resize() {
-            let height = $("body").height() - $(".navbartop").height() - $(".navbarbottom").height() - 50;
+            let height = $("body").height() - $(".navbartop").height() - $(".navbarbottom").height() - 100;
+            height = $(".navbarbottom").position().top - $('#myTabContent').position().top - 110;
             $("div.container-main").css('max-height', height);
             $("div.container-main").css('height', height);
             $("div.musicqueue").css('max-height', height);
