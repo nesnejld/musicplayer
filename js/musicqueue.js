@@ -61,6 +61,16 @@ define([], function () {
         stop(audio) {
             audio.currentTime = audio.duration;
         }
+        restart(audio) {
+            audio.currentTime = 0.0;
+        }
+        volumeup(audio) {
+            audio.currentTime = audio.duration;
+        }
+        volumeup(audio) {
+            audio.currentTime = 0.0;
+        }
+
         async playall() {
             this.playing = true;
             let queue = this.queue;
@@ -74,13 +84,45 @@ define([], function () {
             this.playing = false;
         }
         newaudio(url) {
-            this.audio = url ? new Audio(url) : new Audio();
-            this.audio.controls = true;
-            let audio = this.audio;
-            this.div.empty().append(this.audio);
-            let span = $(`<span style="color:white"><a class="btn btn-lg stop" href="#"> <i class="fa fa-stop-circle" style="color:white" aria-hidden="true"></i>Stop</a></span>`);
-            this.div.append(span);
-            span.on("click", () => { this.stop(audio); });
+            // this.audio = url ? new Audio(url) : new Audio();
+            // this.audio.controls = false;
+            // let audio = this.audio;
+            // this.div.empty().append(this.audio);
+            let audio = $("audio")[0];
+            var player = $("#player")[0];
+            if (url) {
+                $("audio source").attr("src", url);
+                player.load();
+                return player;
+            }
+            // let span = $(`<span style="color:white"><a class="btn btn-lg stop" href="#"> <i class="fa fa-stop-circle" style="color:white" aria-hidden="true"></i>Stop</a></span>`);
+            // this.div.append(span);
+            let span = $(" #audio-player #controls a.stop");
+            span.on("click", () => {
+                this.stop(player);
+            });
+            span = $(" #audio-player #controls a.restart");
+            span.on("click", () => {
+                this.restart(player);
+            });
+            $("#volume-up").on("click", evt => {
+                var player = $("#player")[0];
+                let volume = player.volume;
+                volume += 0.10;
+                volume = Math.min(volume, 1.00);
+                player.volume = volume;
+                var volume_bar = $("#volume");
+                volume_bar.progressbar("value", 100 * player.volume);
+            });
+            $("#volume-down").on("click", evt => {
+                var player = $("#player")[0];
+                let volume = player.volume;
+                volume -= 0.10;
+                volume = Math.max(volume, 0.00);
+                player.volume = volume;
+                var volume_bar = $("#volume");
+                volume_bar.progressbar("value", 100 * player.volume);
+            });
             return audio;
         }
         updateq() {
@@ -178,7 +220,10 @@ define([], function () {
                 td = $("<td>").attr("data-uri", q);
                 //
                 button = $("<a>").addClass("btn btn-sm btn-default");
-                button.on("click", this.movetotop.bind(this));
+                button.on("click", evt => {
+                    this.movetotop.bind(this)(evt);
+                    $("div.tooltip").hide();
+                });
                 span = $("<span>").addClass("fa fa-play");
                 button.attr({
                     'data-bs-toggle': 'tooltip',
@@ -187,7 +232,10 @@ define([], function () {
                 td.append(button.append(span));
                 ///
                 button = $("<a>").addClass("btn btn-sm btn-default");
-                button.on("click", this.moveup.bind(this));
+                button.on("click", evt => {
+                    this.moveup.bind(this)(evt);
+                    $("div.tooltip").hide();
+                });
                 span = $("<span>").addClass("fa fa-long-arrow-up");
                 button.attr({
                     'data-bs-toggle': 'tooltip',
@@ -196,7 +244,10 @@ define([], function () {
                 td.append(button.append(span));
                 //
                 button = $("<a>").addClass("btn btn-sm btn-default");
-                button.on("click", this.movedown.bind(this));
+                button.on("click", evt => {
+                    this.movedown.bind(this)(evt);
+                    $("div.tooltip").hide();
+                });
                 span = $("<span>").addClass("fa fa-long-arrow-down");
                 button.attr({
                     'data-bs-toggle': 'tooltip',
@@ -205,7 +256,10 @@ define([], function () {
                 td.append(button.append(span));
                 //
                 button = $("<a>").addClass("btn btn-sm btn-default");
-                button.on("click", this.remove.bind(this));
+                button.on("click", evt => {
+                    this.remove.bind(this)(evt);
+                    $("div.tooltip").hide();
+                });
                 span = $("<span>").addClass("fa fa-remove");
                 button.attr({
                     'data-bs-toggle': 'tooltip',
@@ -220,7 +274,8 @@ define([], function () {
                 });
                 //
                 let parts = decodeURIComponent(q).replace(/\/$/, '').split('/');
-                parts.shift();
+                // parts = parts.slice(parts.indexOf('Music') + 1);
+                parts = parts.slice(parts.length - 3);
                 for (let p of parts) {
                     tr.append($("<td>").append("<span>").text(p));
                 }
@@ -242,8 +297,10 @@ define([], function () {
         play(url) {
             let msg = decodeURIComponent(url);
             msg = msg.substring(msg.lastIndexOf('/') + 1);
-            this.status(`Playing ${msg}`);
+            this.status(`Playing: ${msg}`);
             let audio = this.newaudio(url);
+            $("#play").toggleClass("fa-play", false);
+            $("#play").toggleClass("fa-pause", true);
             audio.play();
             // this.audio = new Audio(url);
             // this.audio.controls = true;
