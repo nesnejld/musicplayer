@@ -254,7 +254,10 @@ async function processurl(url) {
     return HTMLParser.parse(html.join(''));
 }
 onmessage = async (e) => {
-    let root = 'http://192.168.3.15/musicplayer/Music/';
+    console.log(e.data[0]);
+    let root = e.data.length == 0 ? 'http://localhost/musicplayer/Music/' : e.data[0];
+    // let root = 'http://localhost/musicplayer0/Music/';
+    console.log(root);
     async function process(url) {
         if (debug) {
             console.log(url);

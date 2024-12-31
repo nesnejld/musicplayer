@@ -13,6 +13,7 @@ require(["flatten", "overlay", "musicqueue"], function (result, Overlay, MusicQu
     $(function () {
         const worker = new Worker("js/worker.js");
         let json = null;
+        const musicdirectory = 'Music/';
         Overlay.text('Loading music ....');
         Overlay.show();
         worker.onmessage = (e) => {
@@ -59,7 +60,7 @@ require(["flatten", "overlay", "musicqueue"], function (result, Overlay, MusicQu
                 // console.log("Message received from worker");
             }
         };
-        worker.postMessage([]);
+        worker.postMessage([location.href + musicdirectory]);
         let FileTree = result.FileTree;
 
         // function canonicalize(name) {
@@ -83,7 +84,6 @@ require(["flatten", "overlay", "musicqueue"], function (result, Overlay, MusicQu
         // }
         let folderopen = 'fa fa-folder-open';
         let folderclosed = 'fa fa-folder';
-        let musicdirectory = 'Music/';
         $("div.audio").attr('data-musicdirectory', musicdirectory);
         let audio = new MusicQueue($("div.audio"), status, statustop);
         let gettree = async function (hrefparent, depth) {
