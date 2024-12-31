@@ -54,7 +54,8 @@ require(["flatten", "overlay", "musicqueue"], function (result, Overlay, MusicQu
             }
             else if (e.data.type == 'url') {
                 // console.log(e.data.url);
-                $("#status").text(e.data.url);
+                status(e.data.url);
+                Overlay.text(e.data.url);
                 // console.log("Message received from worker");
             }
         };
@@ -131,6 +132,7 @@ require(["flatten", "overlay", "musicqueue"], function (result, Overlay, MusicQu
 
         function status(message) {
             $("#status").text(message);
+            $("#statustop").text(message);
         }
         function statustop(message) {
             $("#statustop").text(message);
@@ -169,7 +171,11 @@ require(["flatten", "overlay", "musicqueue"], function (result, Overlay, MusicQu
                 ) {
                     let span = $("<span>");
                     // span.text(decodeURIComponent(j.self).replace(/\/$/, '').replace(/\..[A-z]*$/, ''));
-                    span.text(j.self.replace(/\/$/, ''));
+                    let spantext = j.self.replace(/\/$/, '').replace(/\.MP3$/i, '');
+                    spantext = spantext.replace(/\/$/, '').replace(/\.M4A$/i, '');
+                    spantext = spantext.replace(/\/$/, '').replace(/\.OGG$/i, '');
+                    spantext = spantext.replace(/\/$/, '').replace(/\.WAV$/i, '');
+                    span.text(spantext);
                     li.append(span);
                     list.append(li);
                     // Overlay.text(decodeURI(j.uri));
@@ -483,12 +489,14 @@ require(["flatten", "overlay", "musicqueue"], function (result, Overlay, MusicQu
         function resize() {
             let height = $("body").height() - $(".navbartop").height() - $(".navbarbottom").height() - 100;
             height = $(".navbarbottom").position().top - $('#myTabContent').position().top - 110;
+            height = $("body").height() - $('#myTabContent').position().top - 50;
             $("div.container-main").css('max-height', height);
             $("div.container-main").css('height', height);
             $("div.musicqueue").css('max-height', height);
             $("div.pictures").css('max-height', height);
             $("div.music").css('max-height', height);
             $("div.musiccontainer").css('max-height', height);
+            $(".navbar-brand").text($("body").width());
         }
         resize();
         $(window).on('resize', resize);

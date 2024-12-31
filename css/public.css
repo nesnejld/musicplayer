@@ -89,12 +89,13 @@ a.btn.btn-sm.btn-default:hover {
 html,
 body {
     height: 100%;
+    overflow: hidden;
 }
 
 div.audio {
     display: table;
-    border: outset lightgrey 5px;
-    padding: 5px;
+    /* border: outset lightgrey 5px; */
+    /* padding: 5px; */
     background: darkgray;
     margin: 0px;
 }
@@ -146,7 +147,7 @@ div.musicqueue table> :not(caption)>*>* {
 }
 
 div.music {
-    overflow: scroll;
+    overflow-y: scroll;
     min-height: 200px;
     margin: 20px 20px 50px 20px;
     /* background: antiquewhite; */
@@ -174,8 +175,37 @@ div.thumbnail {
     box-shadow: 10px 5px 5px black;
 }
 
+
+@media (max-width: 2000px) {
+    .navbar-brand {
+        color: green;
+    }
+}
+
 @media (max-width: 1000px) {
-    div.musiccontainer {
+    .navbar-brand {
+        color: red;
+    }
+}
+
+
+@media (max-width: 2000px) {
+    div.music {
+        font-size: 1.0rem;
+    }
+
+    div.container-main {
+        font-size: 1.0rem;
+    }
+
+    body {
+        font-size: 1.0rem;
+    }
+
+}
+
+@media only screen and (max-width: 1000px) {
+    div.music {
         font-size: 2.5rem;
     }
 
@@ -196,7 +226,7 @@ li.node.leaf {
 
 li.node.leaf span {
     background-color: white;
-    box-shadow: 10px 5px 5px lightgrey;
+    /* box-shadow: 10px 5px 5px lightgrey; */
 }
 
 li.node.dir {
@@ -259,8 +289,12 @@ li.node.dir {
     cursor: pointer;
     /* Add a pointer on hover */
     color: black;
-    font-size: 3em;
+    /* font-size: 2em; */
     display: flex;
     justify-content: center;
     align-items: center;
+}
+
+#stop {
+    font-family: var(--bs-body-font-family);
 }

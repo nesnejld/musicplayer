@@ -10,22 +10,32 @@
     <script src="node_modules/exif-js/exif.js"></script>
     <script src="node_modules/jquery-contextmenu/dist/jquery.contextMenu.js"></script>
     <link href="node_modules/jquery-contextmenu/dist/jquery.contextMenu.css" type="text/css" rel="stylesheet">
+    <script src="node_modules/jquery-ui/dist/jquery-ui.js"></script>
+    <link rel="stylesheet" href="node_modules/jquery-ui/dist/themes/ui-lightness/jquery-ui.css">
+    <script src=" js/audio.js">    </script>
+    <link href="css/audioplayer.css" rel="stylesheet">
     <link rel="icon" type="image/x-icon" href="/pngtree-vector-house-icon-png-image_695726.jpg">
-
+    <script>
+        $(function () {
+            $(".navbar-brand").text(screen.width);
+        })
+    </script>
 </head>
 
 <body>
     <nav class="navbar navbar-expand-md navbar-dark bg-dark navbartop" aria-label="Fourth navbar example">
         <div class="container-fluid">
-            <a class="navbar-brand" href="#">Media Explorer</a>
+            <a class="navbar-brand" href="#"></a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarsExample04"
                 aria-controls="navbarsExample04" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
 
             <div class="collapse navbar-collapse" id="navbarsExample04">
-                <ul class="navbar-nav me-auto mb-2 mb-md-0">
-                    <!--
+                <div style="display:flex; flex-direction:column;">
+                    <div>
+                        <ul class="navbar-nav me-auto mb-2 mb-md-0">
+                            <!--
                     <li class="nav-item">
                         <a class="nav-link active" aria-current="page" href="#">Home</a>
                     </li>
@@ -36,27 +46,73 @@
                         <a class="nav-link disabled">Disabled</a>
                     </li>
                     -->
-                    <li class="nav-item dropdown" style="display:none">
-                        <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown"
-                            aria-expanded="false">Music queue</a>
-                        <ul class="dropdown-menu music">
-                            <li><a class="dropdown-item" href="#">Action</a></li>
-                            <li><a class="dropdown-item" href="#">Another action</a></li>
-                            <li><a class="dropdown-item" href="#">Something else here</a></li>
+                            <li class="nav-item dropdown" style="display:none">
+                                <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown"
+                                    aria-expanded="false">Music queue</a>
+                                <ul class="dropdown-menu music">
+                                    <li><a class="dropdown-item" href="#">Action</a></li>
+                                    <li><a class="dropdown-item" href="#">Another action</a></li>
+                                    <li><a class="dropdown-item" href="#">Something else here</a></li>
+                                </ul>
+                            </li>
+                            <li class="nav-item dropdown" style="display:none">
+                                <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown"
+                                    aria-expanded="false">View</a>
+                                <ul class="dropdown-menu">
+                                    <li><a class="dropdown-item pictures" href="#">Pictures</a></li>
+                                    <li><a class="dropdown-item music" href="#">Music</a></li>
+                                </ul>
+                            </li>
+                            <li>
+                                <div class="audio">
+                                    <audio id="player">
+                                        <source type="audio/mpeg" />
+                                    </audio>
+                                    <div id="audio-player" style="display:flex">
+                                        <div id="controls" style="display:flex">
+                                            <i id="play" class="fa fa-play"></i>
+                                            <span id="start-time" class="time">00:00</span>
+                                            <div id="progressbar"></div>
+                                            <span id="time" class="time">00:00</span>
+                                            <span id="restart" style="color:white"><a class="btn btn-lg restart"
+                                                    href="#">
+                                                    <i class="fa fa-step-backward" style="color:white"
+                                                        aria-hidden="true"></i></a></span>
+                                            <span id="stop" style="color:white"><a class="btn btn-lg stop" href="#"> <i
+                                                        class="fa fa-step-forward" style="color:white"
+                                                        aria-hidden="true"></i></a>
+                                            </span>
+                                            <div
+                                                style="border-left:1px solid #FFF;height:50px;position:relative;top:10px;">
+                                            </div>
+                                            <i id="mute" class="fa fa-volume-up"></i>
+                                            <div id="volume"></div>
+                                            <div style="display:flex;flex-direction:column;">
+                                                <span id="volume-up" style="color:white" style="margin-right:10px"> <i
+                                                        class="fa fa-chevron-up" style="color:white"
+                                                        aria-hidden="true"></i>
+                                                </span>
+                                                <span id="volume-down" style="color:white"> <i
+                                                        class="fa fa-chevron-down" style="color:white"
+                                                        aria-hidden="true"></i>
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <div id="more-info-box" style="display:none">
+                                            <span id="more-info">MORE INFO</span>
+                                        </div>
+                                        <div id="info-tray" style="display:none">
+                                            Track: <span id="track">Semper Fidelis March</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </li>
                         </ul>
-                    </li>
-                    <li class="nav-item dropdown" style="display:none">
-                        <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown"
-                            aria-expanded="false">View</a>
-                        <ul class="dropdown-menu">
-                            <li><a class="dropdown-item pictures" href="#">Pictures</a></li>
-                            <li><a class="dropdown-item music" href="#">Music</a></li>
-                        </ul>
-                    </li>
-                    <li>
+                    </div>
+                    <div>
                         <div id="statustop">&nbsp;</div>
-                    </li>
-                </ul>
+                    </div>
+                </div>
                 <!--
                 <form role="search">
                     <input class="form-control" type="search" placeholder="Search" aria-label="Search">
@@ -65,7 +121,7 @@
             </div>
         </div>
     </nav>
-    <nav class="navbar fixed-bottom navbar-expand-sm navbar-dark bg-dark navbarbottom">
+    <nav class="navbar fixed-bottom navbar-expand-sm navbar-dark bg-dark navbarbottom" style="display:none">
         <div class="container-fluid">
             <!-- <a class="navbar-brand" href="#">Bottom navbar</a> -->
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse"
@@ -73,10 +129,6 @@
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarCollapse">
-                <li class="nav-item">
-                    <div class="audio">
-                    </div>
-                </li>
                 <li class="nav-item" style="display:none">
                     <a class="nav-link active" aria-current="page" href="#">Home</a>
                 </li>

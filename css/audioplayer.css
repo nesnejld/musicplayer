@@ -1,0 +1,143 @@
+#audio-player {
+    height: 70px;
+    /* width: 500px; */
+    overflow: hidden;
+    background-color: var(--bs-dark-rgb) !important;
+    /* var(--bs-gray-900); */
+    /* #2B2B2B; */
+    color: white;
+    -webkit-user-select: none;
+    /* webkit (safari, chrome) browsers */
+    -moz-user-select: none;
+    /* mozilla browsers */
+    -khtml-user-select: none;
+    /* webkit (konqueror) browsers */
+    -ms-user-select: none;
+    /* IE10+ */
+}
+
+#controls {
+    height: 80px;
+    background-color: var(--bs-gray);
+    /* background-color: var(--bs-dark); */
+    /*var(--bs-dark-rgb);*/
+    /* var(--bs-gray-900); */
+    width: 500px;
+}
+
+.time {
+    font-size: 10px;
+    color: white;
+    position: relative;
+    top: 14px;
+    margin: 5px;
+}
+
+@media (max-width: 2000px) {
+    .time {
+        font-size: 1rem;
+    }
+
+    .fa-play {
+        color: white;
+        font-size: 2rem;
+    }
+}
+
+@media (max-width: 1000px) {
+    .time {
+        font-size: 2rem;
+    }
+
+    .fa-play {
+        color: white;
+        font-size: 2rem;
+        background: yellow;
+    }
+}
+
+
+
+#progressbar,
+#volume {
+    height: 10px;
+    display: inline-block;
+    border-radius: 0px;
+    border: none;
+    position: relative;
+    top: 16px;
+}
+
+#progressbar {
+    width: 150px;
+}
+
+#play,
+#mute {
+    font-size: 16px;
+    min-width: 30px;
+    position: relative;
+    top: 17px;
+}
+
+#play {
+    margin-left: 15px;
+}
+
+#volume {
+    width: 50px;
+}
+
+#more-info-box {
+    display: inline-block;
+    width: 150px;
+    height: 50px;
+    position: relative;
+    left: 350px;
+    top: -50px;
+    padding-top: 18px;
+    text-align: center;
+    font-family: sans-serif;
+    font-size: 12px;
+    color: white;
+}
+
+#more-info-box,
+#more-info-box>span {
+    cursor: context-menu;
+}
+
+#info-tray {
+    display: inline-block;
+    color: white;
+    position: relative;
+    width: 100%;
+    top: -65px;
+    height: 50px;
+    padding: 5px;
+}
+
+.ui-widget-header {
+    background: #cedc98;
+    border: 1px solid #DDDDDD;
+    color: #333333;
+    font-weight: bold;
+}
+
+.ui-progressbar {
+    /* background: red; */
+    background: #2B2B2B;
+}
+
+.ui-progressbar-value {
+    background: white;
+}
+
+#mute,
+#volume,
+#play,
+#volume-up,
+#volume-down {
+    margin-left: 10px;
+    margin-right: 10px;
+}

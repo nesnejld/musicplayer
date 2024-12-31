@@ -20,6 +20,15 @@
             "program": "${file}",
             "console": "integratedTerminal",
             "justMyCode": true
+        },
+        {
+            "name": "aiff2mp3",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/scripts/aiff2mp3.py",
+            "console": "integratedTerminal",
+            "cwd": "${workspaceFolder}/scripts",
+            "justMyCode": true
         }
     ]
 }
