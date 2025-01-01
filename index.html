@@ -35,17 +35,6 @@
                 <div style="display:flex; flex-direction:column;">
                     <div>
                         <ul class="navbar-nav me-auto mb-2 mb-md-0">
-                            <!--
-                    <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href="#">Home</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">Link</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link disabled">Disabled</a>
-                    </li>
-                    -->
                             <li class="nav-item dropdown" style="display:none">
                                 <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown"
                                     aria-expanded="false">Music queue</a>
@@ -64,46 +53,53 @@
                                 </ul>
                             </li>
                             <li>
-                                <div class="audio">
-                                    <audio id="player">
-                                        <source type="audio/mpeg" />
-                                    </audio>
-                                    <div id="audio-player" style="display:flex">
-                                        <div id="controls" style="display:flex">
-                                            <i id="play" class="fa fa-play"></i>
-                                            <span id="start-time" class="time">00:00</span>
-                                            <div id="progressbar"></div>
-                                            <span id="time" class="time">00:00</span>
-                                            <span id="restart" style="color:white"><a class="btn btn-lg restart"
-                                                    href="#">
-                                                    <i class="fa fa-step-backward" style="color:white"
-                                                        aria-hidden="true"></i></a></span>
-                                            <span id="stop" style="color:white"><a class="btn btn-lg stop" href="#"> <i
-                                                        class="fa fa-step-forward" style="color:white"
-                                                        aria-hidden="true"></i></a>
-                                            </span>
-                                            <div
-                                                style="border-left:1px solid #FFF;height:50px;position:relative;top:10px;">
-                                            </div>
-                                            <i id="mute" class="fa fa-volume-up"></i>
-                                            <div id="volume"></div>
-                                            <div style="display:flex;flex-direction:column;">
-                                                <span id="volume-up" style="color:white" style="margin-right:10px"> <i
-                                                        class="fa fa-chevron-up" style="color:white"
-                                                        aria-hidden="true"></i>
+                                <div style="display:flex;">
+                                    <div class="audio">
+                                        <audio id="player">
+                                            <source type="audio/mpeg" />
+                                        </audio>
+                                        <div id="audio-player" style="display:flex">
+                                            <div id="controls" style="display:flex">
+                                                <i id="play" class="fa fa-play"></i>
+                                                <span id="start-time" class="time">00:00</span>
+                                                <div id="progressbar"></div>
+                                                <span id="time" class="time">00:00</span>
+                                                <span id="restart" style="color:white"><a class="btn btn-lg restart"
+                                                        href="#">
+                                                        <i class="fa fa-step-backward" style="color:white"
+                                                            aria-hidden="true"></i></a></span>
+                                                <span id="stop" style="color:white"><a class="btn btn-lg stop" href="#">
+                                                        <i class="fa fa-step-forward" style="color:white"
+                                                            aria-hidden="true"></i></a>
                                                 </span>
-                                                <span id="volume-down" style="color:white"> <i
-                                                        class="fa fa-chevron-down" style="color:white"
-                                                        aria-hidden="true"></i>
-                                                </span>
+                                                <div
+                                                    style="border-left:1px solid #FFF;height:50px;position:relative;top:10px;">
+                                                </div>
+                                                <i id="mute" class="fa fa-volume-up"></i>
+                                                <div id="volume"></div>
+                                                <div style="display:flex;flex-direction:column;">
+                                                    <span id="volume-up" style="color:white" style="margin-right:10px">
+                                                        <i class="fa fa-chevron-up" style="color:white"
+                                                            aria-hidden="true"></i>
+                                                    </span>
+                                                    <span id="volume-down" style="color:white"> <i
+                                                            class="fa fa-chevron-down" style="color:white"
+                                                            aria-hidden="true"></i>
+                                                    </span>
+                                                </div>
+                                            </div>
+                                            <div id="more-info-box" style="display:none">
+                                                <span id="more-info">MORE INFO</span>
+                                            </div>
+                                            <div id="info-tray" style="display:none">
+                                                Track: <span id="track">Semper Fidelis March</span>
                                             </div>
                                         </div>
-                                        <div id="more-info-box" style="display:none">
-                                            <span id="more-info">MORE INFO</span>
-                                        </div>
-                                        <div id="info-tray" style="display:none">
-                                            Track: <span id="track">Semper Fidelis March</span>
-                                        </div>
+                                    </div>
+                                    <div class="form-group" style="color:white;margin-left:100px;">
+                                        <label for="workerroot">Using server:</label>
+                                        <input type="text" class="form-control" id="workerroot"
+                                            placeholder="Using server">
                                     </div>
                                 </div>
                             </li>
@@ -113,12 +109,13 @@
                         <div id="statustop">&nbsp;</div>
                     </div>
                 </div>
-                <!--
+            </div>
+            <!--
                 <form role="search">
                     <input class="form-control" type="search" placeholder="Search" aria-label="Search">
                 </form>
                 -->
-            </div>
+        </div>
         </div>
     </nav>
     <nav class="navbar fixed-bottom navbar-expand-sm navbar-dark bg-dark navbarbottom" style="display:none">

@@ -14,6 +14,9 @@ require(["flatten", "overlay", "musicqueue"], function (result, Overlay, MusicQu
         const worker = new Worker("js/worker.js");
         let json = null;
         const musicdirectory = 'Music/';
+        let folderopen = 'fa fa-folder-open';
+        let folderclosed = 'fa fa-folder';
+        let listtype = "ul";
         Overlay.text('Loading music ....');
         Overlay.show();
         worker.onmessage = (e) => {
@@ -60,76 +63,21 @@ require(["flatten", "overlay", "musicqueue"], function (result, Overlay, MusicQu
                 // console.log("Message received from worker");
             }
         };
-        worker.postMessage([location.href + musicdirectory]);
+        let workerroot = location.href;
+        // workerroot = "http://192.168.3.15/musicplayer/";
+        let url = new URL(workerroot);
+        $("#workerroot").attr("placeholder", url.host).val(url.host).on("change", (e) => {
+            console.log($(e.currentTarget).val());
+            $("div.music").removeClass("show").addClass("hide");
+            workerroot = `http://${$(e.currentTarget).val()}/musicplayer/`;
+            Overlay.text('Loading music ....');
+            Overlay.show();
+            worker.postMessage([workerroot + musicdirectory]);
+        });
+        worker.postMessage([workerroot + musicdirectory]);
         let FileTree = result.FileTree;
-
-        // function canonicalize(name) {
-        //     if (name.indexOf("/../") != -1) {
-        //         let i = name.indexOf("/../");
-        //         let path = name.substr(0, i);
-        //         path = path.substr(0, path.lastIndexOf('/'));
-        //         return path + name.substr(i + 3);
-        //     }
-        //     else if (name.indexOf("/./") != -1) {
-        //         return name.substr(0, name.indexOf("/./")) + name.substr(name.indexOf("/./") + 2);
-        //     }
-        //     if (name.startsWith("../")) {
-        //         throw new Exception();
-        //     }
-        //     else if (name.startsWith("./")) {
-        //         return name.substr(2);
-        //     } else {
-        //         return name;
-        //     }
-        // }
-        let folderopen = 'fa fa-folder-open';
-        let folderclosed = 'fa fa-folder';
         $("div.audio").attr('data-musicdirectory', musicdirectory);
         let audio = new MusicQueue($("div.audio"), status, statustop);
-        let gettree = async function (hrefparent, depth) {
-            // console.log(hrefparent)
-            // console.log(depth)
-            return new Promise(resolve => {
-                let children = [];
-                $.get(hrefparent).then(async function (d) {
-                    $.each($.parseHTML(d), async function (i, el) {
-                        // console.log(el)
-                        if (el.tagName == 'TABLE') {
-                            let trs = $('tr', el);
-                            $.each(trs, async function (i, tr) {
-                                if ($('th', tr).length == 0 && $('img[alt="[PARENTDIR]"]', tr).length == 0) {
-                                    let directory = false;
-                                    $('td', tr).each(function (i, td) {
-                                        if (i == 0) {
-                                            if ($('img[alt="[DIR]"]', td).length == 1) {
-                                                directory = true;
-                                            }
-                                            if ($('img[alt="[FILE]"]', td).length == 1) {
-                                                //file
-                                            }
-                                        }
-                                        else if (i == 1) {
-                                            href = $('a', td).attr('href');
-                                            text = $('a', td).text();
-                                        }
-                                    });
-                                    let name = canonicalize(hrefparent + href);
-                                    children.push({ parent: hrefparent, self: canonicalize(href), name: name, directory: directory, depth: depth });
-                                }
-                            });
-                        }
-                    });
-                    resolve(children);
-                });
-            });
-        };
-        function getdate(img, td) {
-            gettags(img).then(function (tags) {
-                $(td).append($("<div>").text(tags["DateTimeOriginal"]));
-            });
-
-        }
-
         function status(message) {
             $("#status").text(message);
             $("#statustop").text(message);
@@ -151,7 +99,6 @@ require(["flatten", "overlay", "musicqueue"], function (result, Overlay, MusicQu
             }
             return json;
         }
-        let listtype = "ul";
         function renderJSON(json) {
             let list = $(`<${listtype}>`);
             list.addClass("json hide");
@@ -229,78 +176,6 @@ require(["flatten", "overlay", "musicqueue"], function (result, Overlay, MusicQu
             let selector = "div.music";
             $(selector).empty().append(ol);
             e.trigger("loaddirectorydone");
-            /*
-            $.contextMenu({
-                // define which elements trigger this menu
-                selector: "div.music li[data-leaf='false']",
-                // define the elements of the menu
-                items: {
-                    playall: {
-                        name: function (a) {
-                            return "Play all"
-                        }, callback: function (key, opt) {
-                            $("li[data-leaf='true']", this).each((i, e) => {
-                                queue.push($(e).attr('data-uri'))
-                            }
-                            )
-                            updateq()
-                            if (!playing) {
-                                playall()
-                            }
-                        }
-                    },
-                }
-            });
-            */
-            /*
-            $.contextMenu({
-                // define which elements trigger this menu
-                selector: "div.music li[data-leaf='true']",
-                // define the elements of the menu
-                items: {
-                    playall: {
-                        name: function (a) {
-                            return "Play"
-                        }, callback: function (key, opt) {
-                            queue.push(this.attr('data-uri'))
-                            updateq()
-                            if (!playing) {
-                                playall()
-                            }
-                        }
-                    },
-                }
-            });
-            */
-            /*
-             $.contextMenu({
-                 // define which elements trigger this menu
-                 selector: "ul.dropdown-menu.music li",
-                 // define the elements of the menu
-                 items: {
-                     remove: {
-                         name: "Remove from queue", callback: function (key, opt) {
-                             remove({ target: this })
-                             return;
-                         }
-                     },
-                     up: {
-                         name: "Move up", callback: function (key, opt) {
-                             moveup({ target: this })
-                             return;
-                         }
-                     },
-                     down: {
-                         name: "Move down", callback: function (key, opt) {
-                             movedown({ target: this })
-                             return;
-                         }
-                     },
-     
-                 }
-                 // there's more, have a look at the demos and docs...
-             });
-             */
             $('li', $(selector)).on("click", function (event) {
                 event.stopPropagation();
                 let eparent = $(event.target).parent();
@@ -540,4 +415,4 @@ require(["flatten", "overlay", "musicqueue"], function (result, Overlay, MusicQu
         });
         // backup();
     });
-});
+});;;;;
