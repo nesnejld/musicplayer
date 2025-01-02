@@ -63,7 +63,7 @@ require(["flatten", "overlay", "musicqueue"], function (result, Overlay, MusicQu
                 // console.log("Message received from worker");
             }
         };
-        let workerroot = location.href;
+        let workerroot = new URL(this.location.pathname, this.location.origin).href;
         // workerroot = "http://192.168.3.15/musicplayer/";
         let url = new URL(workerroot);
         $("#workerroot").attr("placeholder", url.host).val(url.host).on("change", (e) => {
