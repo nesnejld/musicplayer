@@ -19,6 +19,7 @@ require(["flatten", "overlay", "musicqueue"], function (result, Overlay, MusicQu
         let listtype = "ul";
         Overlay.text('Loading music ....');
         Overlay.show();
+
         worker.onmessage = (e) => {
             if (e.data.type == 'result') {
                 // console.log(e.data);
@@ -415,4 +416,4 @@ require(["flatten", "overlay", "musicqueue"], function (result, Overlay, MusicQu
         });
         // backup();
     });
-});;;;;
+});

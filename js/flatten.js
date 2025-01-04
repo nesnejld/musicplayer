@@ -244,16 +244,97 @@ define(["overlay"], function (Overlay) {
                     rotate.prop('angle', 0);
                     img.on("click", async function (e) {
                         let tags = await FileTree.gettags(e.target);
-                        let img = $("<img>").attr("src", $(e.target).attr("src")).attr("width", "500px");
+                        let width = 200;
+                        let orientation = tags["Orientation"];
                         let imageWidth = "ImageWidth" in tags ? tags["ImageWidth"] : tags["PixelXDimension"];
                         let imageHeight = "ImageHeight" in tags ? tags["ImageHeight"] : tags["PixelYDimension"];
-                        $('#myModal div.modal-body').empty().append(img);
-                        $('#myModal div.modal-content').css("width", "600px");
-                        $('#myModal div.modal-body').append($("<div>").text(tags["DateTimeOriginal"]));
-                        $('#myModal div.modal-body').append($("<div>").text(`width: ${imageWidth}; height:${imageHeight};`));
-                        $('#myModal div.modal-body').append($("<div>").text(`make: ${tags["Make"]}; model:${tags["Model"]};`));
-                        $('#myModal h5.modal-title').text(decodeURIComponent($(e.currentTarget).attr("src")));
-                        $('#myModal').modal('show');
+                        /*
+orientation values:
+  1  = 0 degrees: the correct orientation, no adjustment is required.
+  2  = 0 degrees, mirrored: image has been flipped back-to-front.
+  3  = 180 degrees: image is upside down.
+  4  = 180 degrees, mirrored: image has been flipped back-to-front and is upside down.
+  5  = 90 degrees: image has been flipped back-to-front and is on its side.
+  6  = 90 degrees, mirrored: image is on its side.
+  7  = 270 degrees: image has been flipped back-to-front and is on its far side.
+  8  = 270 degrees, mirrored: image is on its far side.
+
+                        */
+                        if (orientation == 6) {
+                            let temp = imageHeight;
+                            imageHeight = imageWidth;
+                            imageWidth = temp;
+                        }
+                        let height = Math.floor(width / imageWidth * imageHeight) + 50;
+                        let img = $("<img>").attr("src", $(e.target).attr("src")).width(width).height(height);
+                        function getModal() {
+                            return $(`
+                        <div id="myModal" class="modal fade" tabindex="-1">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title">Confirmation</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                    </div>
+                                    <div class="modal-body" style="justify-content: center;display:flex;">
+                                        <p>Do you want to save changes to this document before closing?</p>
+                                        <p class="text-secondary"><small>If you don't save, your changes will be lost.</small></p>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                        <button type="button" class="btn btn-primary">Save changes</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                `);
+                        }
+                        let modal = getModal(); //$("#myModal");
+                        $("#myModal").remove();
+                        modal.insertAfter("body");
+                        modal.find('div.modal-body').empty().append(img);
+                        console.log(`width:${width}; height:${height}`);
+                        modal.find('div.modal-content')
+                            .resizable({
+                                handles: 'n, e, s, w, ne, sw, se, nw',
+                            })
+                            .draggable({
+                                handle: '.modal-header'
+                            }).on("resize", (e, ui) => {
+                                modal.find("div.modal-body").css("width", "").css("height", "");
+                                // $("#myModal div.modal-content").css("width", "").css("height", "");
+                                let header = modal.find('div.modal-header');
+                                let headerheight = header.outerHeight();
+                                let footer = modal.find('div.modal-footer');
+                                let footerheight = footer.outerHeight();
+                                let body = modal.find("div.modal-body");
+                                let width = body.width();
+                                let height = body.height();
+                                let contentwidth = modal.find("div.modal-content").width();
+                                let contentheight = modal.find("div.modal-content").height();
+                                console.log(`${width} ${height} ${contentwidth} ${contentheight}`);
+                                if (width > contentwidth || height > contentheight) {
+                                    height = contentheight - headerheight - footerheight - 100;
+                                    console.log("Oops!");
+                                }
+                                height = contentheight - headerheight - footerheight - 50;
+                                if (width * imageHeight / imageWidth > height) {
+                                    width = Math.floor(height * imageWidth / imageHeight);
+                                }
+                                else {
+                                    height = Math.floor(width / imageWidth * imageHeight);
+                                }
+                                console.log(`width:${width}; height:${height}; ${width / height}; ${imageWidth / imageHeight}`);
+                                modal.find("div.modal-body img").width(width).height(height);
+                                return;
+                            });
+                        // $("#myModal div.modal-content").width(width + 100);
+                        modal.find("div.modal-content div.modal-body").width(width).height(height);
+                        modal.find('div.modal-footer').empty().css({ "justify-content": "flex-start" }).append($("<div>").text(tags["DateTimeOriginal"]));
+                        modal.find('div.modal-footer').append($("<div>").text(`width: ${imageWidth}; height:${imageHeight};`));
+                        modal.find('div.modal-footer').append($("<div>").text(`make: ${tags["Make"]}; model:${tags["Model"]};`));
+                        modal.find(' h5.modal-title').text(decodeURIComponent($(e.currentTarget).attr("src")));
+                        modal.modal('show');
                         // window.open(e.target.src)
                     });
                     download.on("click", async function (e) {
