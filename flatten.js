@@ -211,11 +211,7 @@ define(["overlay"], function (Overlay) {
                     let filename = decodeURI(n);
                     let name = decodeURI(prefix + n);
                     // topdiv.text(name);
-                    topdiv.append($("<a>").attr("href", "#").attr("data-href", name).text(name.substring(prefix.length))
-                        .on("click", (e) => {
-                            let href = $(e.target).attr("data-href");
-                            window.open(href);
-                        }));
+                    topdiv.append($("<a>").attr("data-href", name).attr("href", "#").text(name.substring(prefix.length))).on("click", () => { });
                     div.append(topdiv);
                     div.append(imgdiv);
                     div.append(bottomdiv);
@@ -260,9 +256,9 @@ define(["overlay"], function (Overlay) {
                     img.on("click", async function (e) {
                         let tags = await FileTree.gettags(e.target);
                         let width = 200;
-                        let orientation = tags["Orientation"];
-                        let imageWidth = "ImageWidth" in tags ? tags["ImageWidth"] : tags["PixelXDimension"];
-                        let imageHeight = "ImageHeight" in tags ? tags["ImageHeight"] : tags["PixelYDimension"];
+                        // let orientation = tags["Orientation"];
+                        let imageWidth; // = "ImageWidth" in tags ? tags["ImageWidth"] : tags["PixelXDimension"];
+                        let imageHeight; //= "ImageHeight" in tags ? tags["ImageHeight"] : tags["PixelYDimension"];
                         imageWidth = e.target.naturalWidth;
                         imageHeight = e.target.naturalHeight;
                         /*
@@ -276,8 +272,6 @@ define(["overlay"], function (Overlay) {
                     7  = 270 degrees: image has been flipped back-to-front and is on its far side.
                     8  = 270 degrees, mirrored: image is on its far side.
                     
-                        */
-                        /*
                          if (orientation == 6) {
                              let temp = imageHeight;
                              imageHeight = imageWidth;
@@ -352,7 +346,7 @@ define(["overlay"], function (Overlay) {
                         modal.find('div.modal-footer').empty().css({ "justify-content": "flex-start" }).append($("<div>").text(tags["DateTimeOriginal"]));
                         modal.find('div.modal-footer').append($("<div>").text(`width: ${imageWidth}; height:${imageHeight};`));
                         modal.find('div.modal-footer').append($("<div>").text(`make: ${tags["Make"]}; model:${tags["Model"]};`));
-                        modal.find(' h5.modal-title').text(decodeURIComponent($(e.currentTarget).attr("src")));
+                        // modal.find(' h5.modal-title').text(decodeURIComponent($(e.currentTarget).attr("src")));
                         modal.modal('show');
                         // window.open(e.target.src)
                     });
