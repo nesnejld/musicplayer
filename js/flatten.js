@@ -210,7 +210,6 @@ define(["overlay"], function (Overlay) {
                     let bottomdiv = $("<div>").addClass("bottom");
                     let filename = decodeURI(n);
                     let name = decodeURI(prefix + n);
-                    // topdiv.text(name);
                     topdiv.append($("<a>").attr("href", "#").attr("data-href", name).text(name.substring(prefix.length))
                         .on("click", (e) => {
                             let href = $(e.target).attr("data-href");
@@ -259,7 +258,7 @@ define(["overlay"], function (Overlay) {
                     rotate.prop('angle', 0);
                     img.on("click", async function (e) {
                         let tags = await FileTree.gettags(e.target);
-                        let width = 200;
+                        let width = 500;
                         let orientation = tags["Orientation"];
                         let imageWidth = "ImageWidth" in tags ? tags["ImageWidth"] : tags["PixelXDimension"];
                         let imageHeight = "ImageHeight" in tags ? tags["ImageHeight"] : tags["PixelYDimension"];
@@ -284,8 +283,8 @@ define(["overlay"], function (Overlay) {
                              imageWidth = temp;
                          }
                              */
-                        let height = Math.floor(width / imageWidth * imageHeight) + 50;
-                        let img = $("<img>").attr("src", $(e.target).attr("src")).width(width).height(height);
+                        let height = Math.floor(width / imageWidth * imageHeight);
+                        let img = $("<img>").attr("src", $(e.target).attr("src")).css("padding", "20px").width(width).height(height);
                         function getModal() {
                             return $(`
                         <div id="myModal" class="modal fade" tabindex="-1">
@@ -313,7 +312,7 @@ define(["overlay"], function (Overlay) {
                         modal.insertAfter("body");
                         modal.find('div.modal-body').empty().append(img);
                         console.log(`width:${width}; height:${height}`);
-                        modal.find('div.modal-content')
+                        modal.find('div.modal-content').css("width", `${width + 100}px`)
                             .resizable({
                                 handles: 'n, e, s, w, ne, sw, se, nw',
                             })
@@ -348,11 +347,18 @@ define(["overlay"], function (Overlay) {
                                 return;
                             });
                         // $("#myModal div.modal-content").width(width + 100);
-                        modal.find("div.modal-content div.modal-body").width(width).height(height);
+                        modal.find("div.modal-content div.modal-body img").width(width).height(height);
                         modal.find('div.modal-footer').empty().css({ "justify-content": "flex-start" }).append($("<div>").text(tags["DateTimeOriginal"]));
                         modal.find('div.modal-footer').append($("<div>").text(`width: ${imageWidth}; height:${imageHeight};`));
                         modal.find('div.modal-footer').append($("<div>").text(`make: ${tags["Make"]}; model:${tags["Model"]};`));
-                        modal.find(' h5.modal-title').text(decodeURIComponent($(e.currentTarget).attr("src")));
+                        modal.find('h5.modal-title').empty().append(
+                            $("<a>").attr({ "href": "#", "data-href": decodeURIComponent($(e.currentTarget).attr("src")) })
+                                .text(decodeURIComponent($(e.currentTarget).attr("src")))
+                                .on("click", (e) => {
+                                    let href = $(e.target).attr("data-href");
+                                    window.open(href);
+                                })
+                        );
                         modal.modal('show');
                         // window.open(e.target.src)
                     });
