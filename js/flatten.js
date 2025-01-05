@@ -210,11 +210,17 @@ define(["overlay"], function (Overlay) {
                     let bottomdiv = $("<div>").addClass("bottom");
                     let filename = decodeURI(n);
                     let name = decodeURI(prefix + n);
-                    topdiv.append($("<a>").attr("href", "#").attr("data-href", name).text(name.substring(prefix.length))
-                        .on("click", (e) => {
-                            let href = $(e.target).attr("data-href");
-                            window.open(href);
-                        }));
+                    // topdiv.append($("<a>").attr("href", "#").attr("data-href", name).text(name.substring(prefix.length))
+                    //     .on("click", (e) => {
+                    //         let href = $(e.target).attr("data-href");
+                    //         window.open(href);
+                    // //     }));
+                    // topdiv.append($("<a>").attr("href", "#").attr("data-href", name)
+                    //     .append($("<i>").addClass("fa fa-expand"))
+                    //     .on("click", (e) => {
+                    //         let href = $(e.target).parent().attr("data-href");
+                    //         window.open(href);
+                    //     }));
                     div.append(topdiv);
                     div.append(imgdiv);
                     div.append(bottomdiv);
@@ -222,12 +228,17 @@ define(["overlay"], function (Overlay) {
                     // bottomdiv.append(anchor);
                     // div3.append('<button type="button" class="btn btn-primary btn-small">Primary</button>');
                     // div3.append('<button class="btn"><i class="fa fa-home"></i></button>');
+                    let expand = $('<button>').addClass("btn").append($("<i>").addClass("fa fa-expand").css("color", "var(--bs-link-color)").attr("data-href", name))
+                        .attr({
+                            "data-href": name, "data-toggle": "tooltip", "data-placement": "top", "title": "Open in new tab"
+                        });
                     let download = $('<button>').addClass("btn").append($("<i>").addClass("fa fa-download").css("color", "var(--bs-link-color)"));
                     let trash = $('<button>').addClass("btn").append($("<i>").addClass("fa fa-trash").css("color", "var(--bs-link-color)"));
                     let rotate = $('<button>').addClass("btn").append($("<i>").addClass("fa fa-rotate-right").css("color", "var(--bs-link-color)"));
                     let select = $('<input>').addClass("form-check-input").css({ "position": "relative", "top": "7px", "left": "10px" }).attr({ "type": "checkbox", "value": "somthing" });
                     let buttonbar = $("<div>");
                     topdiv.append(buttonbar);
+                    buttonbar.append(expand);
                     buttonbar.append(download);
                     buttonbar.append(trash);
                     buttonbar.append(rotate);
@@ -362,6 +373,11 @@ define(["overlay"], function (Overlay) {
                         modal.modal('show');
                         // window.open(e.target.src)
                     });
+                    expand
+                        .on("click", (e) => {
+                            let href = $(e.target).attr("data-href");
+                            window.open(href);
+                        });
                     download.on("click", async function (e) {
                         console.log(`download ${filename}`);
                         // anchor.trigger('click');
