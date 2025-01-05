@@ -172,6 +172,7 @@ div.container-main {
 div.thumbnail {
     /* background-color: purple; */
     background-color: white;
+    padding: 20px;
     box-shadow: 10px 5px 5px black;
 }
 
