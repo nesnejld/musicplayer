@@ -353,7 +353,7 @@ define(["overlay"], function (Overlay) {
                         modal.find('div.modal-footer').append($("<div>").text(`make: ${tags["Make"]}; model:${tags["Model"]};`));
                         modal.find('h5.modal-title').empty().append(
                             $("<a>").attr({ "href": "#", "data-href": decodeURIComponent($(e.currentTarget).attr("src")) })
-                                .text(decodeURIComponent($(e.currentTarget).attr("src")))
+                                .text(decodeURIComponent($(e.currentTarget).attr("src").substring(prefix.length)))
                                 .on("click", (e) => {
                                     let href = $(e.target).attr("data-href");
                                     window.open(href);
