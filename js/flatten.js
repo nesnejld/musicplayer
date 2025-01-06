@@ -3,6 +3,28 @@ define(["overlay"], function (Overlay) {
     let folderopen = 'fa fa-folder-open';
     let folderclosed = 'fa fa-folder fa-4x';
     let arrowup = 'fa fa-arrow-up fa-2x';
+    let pictures = null;
+    class Pictures {
+        constructor(filetree) {
+            this.filetree = filetree;
+            this.filetreeindex = {};
+            filetree.forEach((e, i) => {
+                this.filetreeindex[e.name] = i;
+            });
+        }
+        findthumbnail(prefix, n) {
+            let nnn = encodeURI(prefix + n);
+            let i = nnn.lastIndexOf('/') + 1;
+            prefix = nnn.substring(0, i);
+            n = nnn.substring(i);
+            let hasthumbnail = this.filetree[this.filetreeindex[prefix]].hidden &&
+                this.filetree[this.filetreeindex[prefix]].hidden[prefix + ".thumbnails/" + n] != undefined;
+            if (hasthumbnail) {
+                return prefix + ".thumbnails/" + n;
+            }
+            return prefix + n;
+        }
+    }
     class FileTree {
         parent = {};
         lookup = {};
@@ -255,8 +277,9 @@ define(["overlay"], function (Overlay) {
                     };
                     img_.onload = imageLoaded;
                     img = $(img_);
-                    img_.src = prefix + n;
-                    img.attr("src", prefix + n);
+                    img_.src = pictures.prefix + n;
+                    img.attr("src", pictures.findthumbnail(prefix, n));
+                    img.attr("data-src", prefix + n);
                     img.attr("class", "thumbnail");
                     img.attr("width", "250px");
                     img.css("transform", "rotate(0deg)");
@@ -295,7 +318,7 @@ define(["overlay"], function (Overlay) {
                          }
                              */
                         let height = Math.floor(width / imageWidth * imageHeight);
-                        let img = $("<img>").attr("src", $(e.target).attr("src")).css("padding", "20px").width(width).height(height);
+                        let img = $("<img>").attr("src", $(e.target).attr("data-src")).css("padding", "20px").width(width).height(height);
                         function getModal() {
                             return $(`
                         <div id="myModal" class="modal fade" tabindex="-1">
@@ -363,8 +386,8 @@ define(["overlay"], function (Overlay) {
                         modal.find('div.modal-footer').append($("<div>").text(`width: ${imageWidth}; height:${imageHeight};`));
                         modal.find('div.modal-footer').append($("<div>").text(`make: ${tags["Make"]}; model:${tags["Model"]};`));
                         modal.find('h5.modal-title').empty().append(
-                            $("<a>").attr({ "href": "#", "data-href": decodeURIComponent($(e.currentTarget).attr("src")) })
-                                .text(decodeURIComponent($(e.currentTarget).attr("src").substring(prefix.length)))
+                            $("<a>").attr({ "href": "#", "data-href": decodeURIComponent($(e.currentTarget).attr("data-src")) })
+                                .text(decodeURIComponent($(e.currentTarget).attr("data-src").substring(prefix.length)))
                                 .on("click", (e) => {
                                     let href = $(e.target).attr("data-href");
                                     window.open(href);
@@ -422,18 +445,36 @@ define(["overlay"], function (Overlay) {
             }
             return table;
         }.bind(this);
-        static callit = async function (directory) {
+        static mapit = function (c) {
+            if (!c) {
+                return null;
+            }
+            let m = {};
+            c.forEach((cc, i) => m[cc.name] = i);
+            return m;
+        };
+        static callit = async function (directory, hidden = null) {
             return new Promise(async function (resolve) {
                 let allchildren = await FileTree.gettree(directory, 0);
+                let root = null;
+                if (hidden) {
+                    let hiddenchildren = await FileTree.gettree(directory + hidden, 0);
+                    root = { depth: 0, name: directory, parent: null, name: directory, self: '', hidden: FileTree.mapit(hiddenchildren) };
+                }
                 let children = allchildren;
                 while (true) {
                     if (!children || children.length == 0) {
                         break;
                     }
                     let nextchildren = [];
+                    let hiddenchildren = null;
                     for (let c of children) {
                         if (c.directory) {
                             let cc = await FileTree.gettree(c.name, c.depth + 1);
+                            if (hidden) {
+                                let hiddenchildren = await FileTree.gettree(c.name + hidden, c.depth + 1);
+                                c.hidden = FileTree.mapit(hiddenchildren);
+                            }
                             c.children = cc;
                             // console.log(cc)
                             nextchildren = nextchildren.concat(cc);
@@ -441,6 +482,9 @@ define(["overlay"], function (Overlay) {
                     }
                     allchildren = allchildren.concat(nextchildren);
                     children = nextchildren.filter(c => c.directory);
+                }
+                if (root) {
+                    allchildren = [root].concat(allchildren);
                 }
                 resolve(allchildren);
             });
@@ -452,7 +496,7 @@ define(["overlay"], function (Overlay) {
                 let children = [];
                 let href;
                 let text;
-                $.get(hrefparent).then(async function (d) {
+                $.get(hrefparent).done(async function (d) {
                     $.each($.parseHTML(d), async function (i, el) {
                         // console.log(el)
                         if (el.tagName == 'TABLE') {
@@ -481,6 +525,8 @@ define(["overlay"], function (Overlay) {
                         }
                     });
                     resolve(children);
+                }).fail(function (e) {
+                    resolve(null);
                 });
             });
         };
@@ -506,7 +552,32 @@ define(["overlay"], function (Overlay) {
         static loadpictures = async function () {
             Overlay.text('Loading pictures ....');
             Overlay.show();
-            let filetree = new FileTree(await FileTree.callit('Pictures/'));
+            let filetree = new FileTree(await FileTree.callit('Pictures/', '.thumbnails/'));
+            pictures = new Pictures(filetree.d);
+            if (false) {
+                let modal = $(`
+                <div id="myModal" class="modal fade" tabindex="-1">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">FileTree</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                            </div>
+                            <div class="modal-body" style="justify-content: center;display:flex;">
+                                <p>Do you want to save changes to this document before closing?</p>
+                                <p class="text-secondary"><small>If you don't save, your changes will be lost.</small></p>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                <button type="button" class="btn btn-primary">Save changes</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+        `);
+                modal.find('.modal-body').empty().css({ "overflow": "scroll", "max-height": "500px" }).append($("<pre>").text(JSON.stringify(filetree.d, null, 2)));
+                modal.modal('show');
+            }
             let parentdiv = $("div.pictures");
             parentdiv.append(filetree.render('Pictures/', filetree.dd, parentdiv));
             Overlay.hide();
